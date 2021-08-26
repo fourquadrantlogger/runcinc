@@ -1,30 +1,40 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/spf13/cobra"
-	"strings"
+	"runcic/cic"
 )
 
 var (
-	envs []string
+	envs            []string
+	name            string
+	imagePullPolicy string = string(cic.ImagePullPolicyfNotPresent)
+	cicVolume       string = ""
 )
 var cmdRun = &cobra.Command{
 	Use:   "run",
-	Short: "run image -e myenv:abc sh -c sleep 10h",
+	Short: "run image -e myenv:abc --name mycic sh -c sleep 10h",
 	Long:  ``,
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		for _, kv_ := range envs {
-			splitIndex := strings.IndexAny(kv_, "=")
-			if splitIndex > 0 {
-				fmt.Println("export ", kv_[:splitIndex], "=", kv_[splitIndex+1:])
-			}
+		image := args[0]
+		cmds := args[1:]
+		cfg := cic.CicConfig{
+			envs,
+			cmds,
+			cic.ImagePullPolicy(imagePullPolicy),
+			image,
+			name,
+			cicVolume,
 		}
-		fmt.Println("runcic run " + strings.Join(args, " "))
+		cic.Run(cfg)
 	},
 }
 
 func init() {
-	cmdRun.Flags().StringSliceVarP(&envs, "env", "e", []string{"qf:fw"}, "wf")
+	flagSet := cmdRun.Flags()
+	flagSet.StringSliceVarP(&envs, "env", "e", []string{}, "--env VAR1=value1")
+	flagSet.StringVar(&name, "name", "", "--name mycic")
+	flagSet.StringVar(&cicVolume, "cicvolume", "", "--cicvolume /cicvolume")
+	flagSet.StringVar(&imagePullPolicy, "imagePullPolicy", "", "--imagePullPolicy IfNotPresent")
 }
