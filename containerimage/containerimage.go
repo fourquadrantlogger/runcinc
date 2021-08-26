@@ -1,8 +1,8 @@
 package containerimage
 
 type Image struct {
-	Env   map[string]string `json:"Env"`
-	Cmd   []string          `json:"Cmd"`
+	Env   []string `json:"Env"`
+	Cmd   []string `json:"Cmd"`
 	Lower []string
 	Image string `json:"Image"`
 }

@@ -6,7 +6,6 @@ import (
 	"github.com/bitfield/script"
 	log "github.com/sirupsen/logrus"
 	"runcic/containerimage"
-	"runcic/utils"
 	"strings"
 	"time"
 )
@@ -37,7 +36,7 @@ func (c *Podman) Spec(image string) (img *containerimage.Image) {
 		if len(images[0].RepoTags) > 0 {
 			img.Image = images[0].RepoTags[0]
 		}
-		img.Env = utils.ParseEnvs(images[0].Config.Env)
+		img.Env = images[0].Config.Env
 		img.Cmd = images[0].Config.Cmd
 		img.Lower = strings.Split(images[0].GraphDriver.Data.LowerDir, ":")
 	}
