@@ -1,7 +1,5 @@
 package containerimage
 
-import "runcic/containerimage/podman"
-
 type Image struct {
 	Env   map[string]string `json:"Env"`
 	Cmd   []string          `json:"Cmd"`
@@ -14,7 +12,7 @@ type ImageDriver interface {
 	Pull(image string)
 }
 
-var defaultImageDriver ImageDriver = &podman.Podman{}
+var defaultImageDriver ImageDriver
 
 func Driver() ImageDriver {
 	return defaultImageDriver
