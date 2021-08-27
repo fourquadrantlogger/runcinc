@@ -7,8 +7,8 @@ import (
 var (
 	rootCmd = &cobra.Command{
 		Use:   "runcic",
-		Short: "一个可以在标准父容器（cic）内run 子容器image的工具",
-		Long:  `runcic依赖podman获取container image的layer信息`,
+		Short: "一个可以在容器内运行容器image的工具",
+		Long:  `runcic,一个可以在容器内运行容器image的工具`,
 	}
 )
 

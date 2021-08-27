@@ -19,7 +19,7 @@ func Run(cfg CicConfig) (err error) {
 	switch run.ImagePullPolicy {
 	case imagePullPolicyAlways:
 		containerimage.Driver().Pull(run.Image.Image)
-	case ImagePullPolicyfNotPresent:
+	default :
 		imagespec := containerimage.Driver().Spec(run.Image.Image)
 		if imagespec == nil {
 			containerimage.Driver().Pull(run.Image.Image)

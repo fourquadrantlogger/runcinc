@@ -10,9 +10,7 @@ import (
 	"time"
 )
 
-func init() {
-	containerimage.SetDriver(&Podman{})
-}
+
 
 type Podman struct {
 }
