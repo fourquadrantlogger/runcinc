@@ -2,9 +2,10 @@ package cic
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"os/exec"
 	"syscall"
+
+	"github.com/sirupsen/logrus"
 )
 
 func (r *Runcic) mountoverlay() (err error) {
@@ -19,20 +20,24 @@ func (r *Runcic) mountoverlay() (err error) {
 	return err
 }
 func realChroot(path string) error {
+	logrus.Infof("chrooting %s", path)
 	if err := syscall.Chroot(path); err != nil {
 		return fmt.Errorf("Error after fallback to chroot: %v", err)
 	}
 	if err := syscall.Chdir("/"); err != nil {
 		return fmt.Errorf("Error changing to new root after chroot: %v", err)
 	}
+	logrus.Infof("chroot success %s", path)
 	return nil
 }
 
 //Execv
 // https://github.com/opencontainers/runc/blob/master/libcontainer/system/linux.go
 func Execv(cmd string, args []string, env []string) error {
+	logrus.Infof("execv ing %s %+s %+v", cmd,args,env)
 	name, err := exec.LookPath(cmd)
 	if err != nil {
+		logrus.Errorf("exec.LookPath(cmd) %s", err.Error())
 		return err
 	}
 
@@ -41,7 +46,14 @@ func Execv(cmd string, args []string, env []string) error {
 
 func Exec(cmd string, args []string, env []string) error {
 	for {
+		defer func() {
+			if r := recover(); r != nil {
+				fmt.Println("Recovered in f", r)
+			}
+		}()
+		logrus.Infof("exec ing %s %+s %+v", cmd,args,env)
 		err := syscall.Exec(cmd, args, env)
+		logrus.Errorf("syscall.Exec(cmd, args, env) %s", err.Error())
 		if err != syscall.EINTR { //nolint:errorlint // unix errors are bare
 			return err
 		}
