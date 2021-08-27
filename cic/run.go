@@ -9,9 +9,10 @@ import (
 func Run(cfg CicConfig) (err error) {
 
 	run := &Runcic{
-		Envs:    cfg.Env,
-		Name:    cfg.Name,
-		Command: cfg.Cmd,
+		Envs:      cfg.Env,
+		Name:      cfg.Name,
+		Command:   cfg.Cmd,
+		CicVolume: cfg.CicVolume,
 		Image: &common.Image{
 			Image: cfg.Image,
 		},
@@ -27,7 +28,7 @@ func Run(cfg CicConfig) (err error) {
 		}
 	}
 	run.Image = containerimage.Driver().Spec(run.Image.Image)
-	if run.Image==nil{
+	if run.Image == nil {
 		return
 	}
 	//todo 创建之前，需要检测是否已存在
