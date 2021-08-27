@@ -20,5 +20,6 @@ func (r *Runcic) Create() (err error) {
 	r.Name = newName()
 
 	utils.Mkdirp(OverlayRoot)
+	utils.Mkdirp(r.CicVolume)
 	return
 }
