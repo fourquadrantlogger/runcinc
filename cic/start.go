@@ -4,8 +4,21 @@ import (
 	"errors"
 	"github.com/sirupsen/logrus"
 	"os"
+	"runcic/utils"
 )
 
+func (r *Runcic) rootfspath() (err error) {
+	work, worke := os.Stat(r.Roorfs())
+	if worke != nil {
+		utils.Mkdirp(r.Roorfs())
+	} else {
+		if !work.IsDir() {
+			err = errors.New("rootfs should be dir!" + r.Roorfs())
+			logrus.Warnf(err.Error())
+		}
+	}
+	return
+}
 func (r *Runcic) cicvolume() (err error) {
 	if r.CicVolume == "" {
 		err = errors.New("cicvolume not set!")
@@ -55,6 +68,9 @@ func (r *Runcic) cicvolume() (err error) {
 
 func (r *Runcic) Start() (err error) {
 	if err = r.cicvolume(); err != nil {
+		return
+	}
+	if err = r.rootfspath(); err != nil {
 		return
 	}
 	if err = r.mountoverlay(); err != nil {
