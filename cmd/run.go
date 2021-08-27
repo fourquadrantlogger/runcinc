@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"runcic/cic"
 )
@@ -27,6 +28,7 @@ var cmdRun = &cobra.Command{
 			name,
 			cicVolume,
 		}
+		log.Infof("runcic begin run:config %+v", cfg)
 		cic.Run(cfg)
 	},
 }

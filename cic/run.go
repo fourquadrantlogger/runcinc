@@ -18,19 +18,27 @@ func Run(cfg CicConfig) (err error) {
 		},
 		ImagePullPolicy: cfg.ImagePullPolicy,
 	}
+	var pullimage = func() {
+		logrus.Infof("runcic imagedriver pulling image %s", run.Image.Image)
+		containerimage.Driver().Pull(run.Image.Image)
+		logrus.Infof("runcic imagedriver pulled image %s", run.Image.Image)
+	}
 	switch run.ImagePullPolicy {
 	case imagePullPolicyAlways:
-		containerimage.Driver().Pull(run.Image.Image)
+		pullimage()
 	default:
+		logrus.Infof("runcic imagedriver spec image %s", run.Image.Image)
 		imagespec := containerimage.Driver().Spec(run.Image.Image)
 		if imagespec == nil {
-			containerimage.Driver().Pull(run.Image.Image)
+			logrus.Warnf("runcic imagedriver not found image %s", run.Image.Image)
+			pullimage()
 		}
 	}
 	run.Image = containerimage.Driver().Spec(run.Image.Image)
 	if run.Image == nil {
 		return
 	}
+	logrus.Infof("runcic imagedriver spec image %+v", run.Image)
 	//todo 创建之前，需要检测是否已存在
 	if run.Name == "" {
 		if err = run.Create(); err != nil {
