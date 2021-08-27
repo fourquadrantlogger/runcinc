@@ -17,6 +17,7 @@ func (r *Runcic) rootfspath() (err error) {
 			logrus.Warnf(err.Error())
 		}
 	}
+	logrus.Infof("rootfs ok,%s", r.Roorfs())
 	return
 }
 func (r *Runcic) cicvolume() (err error) {
@@ -49,6 +50,7 @@ func (r *Runcic) cicvolume() (err error) {
 			logrus.Warnf(err.Error())
 		}
 	}
+	logrus.Infof("cicvolume updir ok,%s", r.CicVolume+"/"+"up")
 
 	work, worke := os.Stat(r.CicVolume + "/" + "work")
 	if worke != nil {
@@ -63,6 +65,8 @@ func (r *Runcic) cicvolume() (err error) {
 			logrus.Warnf(err.Error())
 		}
 	}
+
+	logrus.Infof("cicvolume workdir ok,%s", r.CicVolume+"/"+"work")
 	return
 }
 
@@ -70,6 +74,7 @@ func (r *Runcic) Start() (err error) {
 	if err = r.cicvolume(); err != nil {
 		return
 	}
+
 	if err = r.rootfspath(); err != nil {
 		return
 	}
@@ -77,6 +82,7 @@ func (r *Runcic) Start() (err error) {
 		return
 	}
 	if err = realChroot(r.Roorfs()); err != nil {
+		logrus.Error(err.Error())
 		return
 	}
 	err = Execv(r.Command[0], r.Command[1:], r.Envs)

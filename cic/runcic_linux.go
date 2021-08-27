@@ -10,10 +10,12 @@ import (
 func (r *Runcic) mountoverlay() (err error) {
 	mountops := r.mountops()
 	err = unix.Mount("overlay", r.Roorfs(), "overlay", 0, mountops)
-	logrus.Infof("mount overlay overlay -o %s %s ",mountops,r.Roorfs())
+	logrus.Infof("mount overlay overlay -o %s %s ", mountops, r.Roorfs())
 	if err != nil {
 		logrus.Errorf("mount overlay fail,errors %s", err.Error())
+		return
 	}
+
 	return err
 }
 func realChroot(path string) error {
