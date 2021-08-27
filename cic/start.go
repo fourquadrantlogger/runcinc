@@ -74,7 +74,6 @@ func (r *Runcic) Start() (err error) {
 	if err = r.cicvolume(); err != nil {
 		return
 	}
-
 	if err = r.rootfspath(); err != nil {
 		return
 	}
