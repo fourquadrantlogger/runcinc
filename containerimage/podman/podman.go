@@ -5,17 +5,15 @@ import (
 	"fmt"
 	"github.com/bitfield/script"
 	log "github.com/sirupsen/logrus"
-	"runcic/containerimage"
+	"runcic/containerimage/common"
 	"strings"
 	"time"
 )
 
-
-
 type Podman struct {
 }
 
-func (c *Podman) Spec(image string) (img *containerimage.Image) {
+func (c *Podman) Spec(image string) (img *common.Image) {
 	result, err := script.Exec(fmt.Sprintf("podman image inspect %s", image)).String()
 	if err != nil {
 		log.Errorf("exec failed: %v", err.Error())
@@ -30,7 +28,7 @@ func (c *Podman) Spec(image string) (img *containerimage.Image) {
 		return
 	}
 	if len(images) > 0 {
-		img = &containerimage.Image{}
+		img = &common.Image{}
 		if len(images[0].RepoTags) > 0 {
 			img.Image = images[0].RepoTags[0]
 		}

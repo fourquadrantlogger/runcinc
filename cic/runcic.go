@@ -2,7 +2,7 @@ package cic
 
 import (
 	"os"
-	"runcic/containerimage"
+	"runcic/containerimage/common"
 	"strings"
 	"time"
 )
@@ -11,7 +11,7 @@ type Runcic struct {
 	Name            string
 	CicVolume       string
 	ContainerID     string
-	Image           *containerimage.Image
+	Image           *common.Image
 	Command         []string
 	Envs            []string
 	Started         time.Time

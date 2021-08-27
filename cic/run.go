@@ -3,6 +3,7 @@ package cic
 import (
 	"github.com/sirupsen/logrus"
 	"runcic/containerimage"
+	"runcic/containerimage/common"
 )
 
 func Run(cfg CicConfig) (err error) {
@@ -11,7 +12,7 @@ func Run(cfg CicConfig) (err error) {
 		Envs:    cfg.Env,
 		Name:    cfg.Name,
 		Command: cfg.Cmd,
-		Image: &containerimage.Image{
+		Image: &common.Image{
 			Image: cfg.Image,
 		},
 		ImagePullPolicy: cfg.ImagePullPolicy,
@@ -19,7 +20,7 @@ func Run(cfg CicConfig) (err error) {
 	switch run.ImagePullPolicy {
 	case imagePullPolicyAlways:
 		containerimage.Driver().Pull(run.Image.Image)
-	default :
+	default:
 		imagespec := containerimage.Driver().Spec(run.Image.Image)
 		if imagespec == nil {
 			containerimage.Driver().Pull(run.Image.Image)
