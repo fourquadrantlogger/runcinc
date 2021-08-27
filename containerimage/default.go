@@ -8,7 +8,9 @@ import (
 var defaultImageDriver common.ImageDriver
 
 func init() {
-	defaultImageDriver = &podman.Podman{}
+	defaultImageDriver = &podman.Podman{
+		Root:"/image",
+	}
 }
 func Driver() common.ImageDriver {
 	return defaultImageDriver

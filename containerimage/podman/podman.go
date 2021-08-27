@@ -11,12 +11,15 @@ import (
 )
 
 type Podman struct {
+	Root string
 }
 
 func (c *Podman) Spec(image string) (img *common.Image) {
-	result, err := script.Exec(fmt.Sprintf("podman image inspect %s", image)).String()
+	cmds:=fmt.Sprintf("podman --root %s image inspect %s",c.Root,image)
+	result, err := script.Exec(cmds).String()
+	log.Info(cmds)
 	if err != nil {
-		log.Errorf("exec failed: %v", err.Error())
+		log.Errorf("podman image inspect failed: %v", err.Error())
 		log.Errorf(result)
 		return
 	}
@@ -39,7 +42,7 @@ func (c *Podman) Spec(image string) (img *common.Image) {
 	return
 }
 func (c *Podman) Pull(image string) {
-	script.Exec(fmt.Sprintf("docker image pull %s", image)).Stdout()
+	script.Exec(fmt.Sprintf("podman --root= %s  image pull %s",c.Root,image)).Stdout()
 	return
 }
 

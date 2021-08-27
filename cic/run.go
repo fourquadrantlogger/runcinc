@@ -27,6 +27,9 @@ func Run(cfg CicConfig) (err error) {
 		}
 	}
 	run.Image = containerimage.Driver().Spec(run.Image.Image)
+	if run.Image==nil{
+		return
+	}
 	//todo 创建之前，需要检测是否已存在
 	if run.Name == "" {
 		if err = run.Create(); err != nil {
