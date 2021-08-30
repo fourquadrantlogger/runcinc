@@ -1,6 +1,7 @@
 package cic
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -61,13 +62,13 @@ func Exec(cmd string, args []string, env []string) error {
 	}
 }
 
-func Execc(cmd string, args []string, env []string) (err error) {
+func Execc(ctx context.Context, cmd string, args []string, env []string) (err error) {
 	name, err := exec.LookPath(cmd)
 	if err != nil {
 		logrus.Infof("exec.LookPath %s not found,error %v", err.Error())
 		return err
 	}
-	c := exec.Command(name, args...)
+	c := exec.CommandContext(ctx, name, args...)
 	c.Env = env
 	c.Stdout = os.Stdout
 	c.Stdin = os.Stdin

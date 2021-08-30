@@ -1,6 +1,7 @@
 package cic
 
 import (
+	"context"
 	"os"
 	"runcic/containerimage/common"
 	"strings"
@@ -9,6 +10,7 @@ import (
 
 type Runcic struct {
 	ParentRootfs    *os.File
+	cancel          context.CancelFunc
 	Name            string
 	CicVolume       string
 	ContainerID     string

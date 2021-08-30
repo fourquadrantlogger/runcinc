@@ -1,6 +1,7 @@
 package cic
 
 import (
+	"context"
 	"errors"
 	"github.com/sirupsen/logrus"
 	"os"
@@ -93,7 +94,9 @@ func (r *Runcic) Start() (err error) {
 		logrus.Errorf("fs mount failed %s", err.Error())
 	}
 	go func() {
-		err = Execc(r.Command[0], r.Command[1:], r.Envs)
+		var ctx context.Context
+		ctx, r.cancel = context.WithCancel(context.Background())
+		err = Execc(ctx, r.Command[0], r.Command[1:], r.Envs)
 		if err != nil {
 			logrus.Errorf("exec exited %v", err.Error())
 		}
@@ -103,6 +106,9 @@ func (r *Runcic) Start() (err error) {
 }
 func (r *Runcic) postStop(s os.Signal, oldpath *os.File) {
 	logrus.Infof("recv signal %+v", s)
+	logrus.Info("sending cic signal")
+	r.cancel()
+	logrus.Info("cic exited")
 	fs.Umount()
 	err := oldpath.Chdir()
 	if err != nil {
