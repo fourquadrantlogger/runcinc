@@ -93,13 +93,20 @@ func (r *Runcic) Start() (err error) {
 	go func() {
 		err = Execc(r.Command[0], r.Command[1:], r.Envs)
 		if err != nil {
-			logrus.Errorf("exec exited", err.Error())
+			logrus.Errorf("exec exited %v", err.Error())
 		}
 	}()
 
 	return err
 }
 func (r *Runcic) postStop(s os.Signal) {
-	logrus.Infof("umount overlay", r.Roorfs())
-	syscall.Unmount(r.Roorfs(), 0)
+	logrus.Infof("recv signal %+v", s)
+	fs.Umount()
+	err := syscall.Unmount(r.Roorfs(), 0)
+	if err != nil {
+		logrus.Errorf("umount overlay failed %s", r.Roorfs())
+	} else {
+		logrus.Infof("umount overlay %v", r.Roorfs())
+	}
+	logrus.Infof("runcic exit")
 }
