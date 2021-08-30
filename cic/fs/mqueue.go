@@ -5,7 +5,6 @@ var mqueue = MountConfig{
 	Fstype: "mqueue",
 	Source: "mqueue",
 	Options: []string{
-		"nosuid",
 		"noexec",
 		"nodev"},
 }

@@ -5,7 +5,6 @@ var devtmpfs = MountConfig{
 	Fstype: "tmpfs",
 	Source: "tmpfs",
 	Options: []string{
-		"nosuid",
 		"strictatime",
 		"mode=755",
 		"size=65536k",
@@ -17,7 +16,6 @@ var shm = MountConfig{
 	Fstype: "tmpfs",
 	Source: "shm",
 	Options: []string{
-		"nosuid",
 		"noexec",
 		"nodev",
 		"mode=1777",

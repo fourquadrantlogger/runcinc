@@ -5,7 +5,6 @@ var sys = MountConfig{
 	Fstype: "sysfs",
 	Source: "sysfs",
 	Options: []string{
-		"nosuid",
 		"noexec",
 		"nodev",
 		"ro"},
