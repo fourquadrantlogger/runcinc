@@ -5,11 +5,12 @@ var devpts = MountConfig{
 	Fstype: "devpts",
 	Source: "devpts",
 	Options: []string{
+		"nosuid",
 		"noexec",
 		"newinstance",
 		"ptmxmode=0666",
 		"mode=0620",
-		"gid=5"},
+	},
 }
 
 var ptmx = MountConfig{
