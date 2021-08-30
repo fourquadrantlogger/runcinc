@@ -28,7 +28,7 @@ func Mount() (err error) {
 	for i := 0; i < len(DefaultMounts); i++ {
 		mc := DefaultMounts[i]
 		if err := os.MkdirAll(mc.Target, 0o755); err != nil {
-			return err
+			continue
 		}
 		mc.Data = strings.Join(mc.Options, ",")
 		mc.Options = nil
