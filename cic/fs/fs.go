@@ -12,7 +12,7 @@ type MountConfig struct {
 	Target  string
 	Fstype  string
 	Flags   uintptr
-	data    string
+	Data    string
 	Options []string
 }
 
@@ -30,11 +30,13 @@ func Mount() (err error) {
 		if err := os.MkdirAll(mc.Target, 0o755); err != nil {
 			return err
 		}
-		err = syscall.Mount(mc.Source, mc.Target, mc.Fstype, 0, strings.Join(mc.Options, ","))
+		mc.Data = strings.Join(mc.Options, ",")
+		mc.Options = nil
+		err = syscall.Mount(mc.Source, mc.Target, mc.Fstype, 0, mc.Data)
 		if err != nil {
 			logrus.Errorf("unix.Mount %+v failed %s", mc, err.Error())
 		} else {
-			logrus.Infof("syscall.Mount(Source=%s, Target=%s, Fstype=%s,Options=%+v", mc.Source, mc.Target, mc.Fstype, mc.Options)
+			logrus.Infof("syscall.Mount(Source=%s, Target=%s, Fstype=%s,Data=%+v", mc.Source, mc.Target, mc.Fstype, mc.Data)
 		}
 	}
 	return

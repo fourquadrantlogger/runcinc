@@ -5,7 +5,7 @@ var devpts = MountConfig{
 	Fstype: "devpts",
 	Source: "devpts",
 	Options: []string{
-		"noexec=0",
+		"noexec",
 		"newinstance",
 		"ptmxmode=0666",
 		"mode=0620",
