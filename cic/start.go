@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/sirupsen/logrus"
 	"os"
+	"runcic/cic/fs"
 	"runcic/utils"
 )
 
@@ -83,6 +84,9 @@ func (r *Runcic) Start() (err error) {
 	if err = realChroot(r.Roorfs()); err != nil {
 		logrus.Errorf("chroot failed %s", err.Error())
 		return
+	}
+	if err = fs.Mount(); err != nil {
+		logrus.Errorf("fs mount failed %s", err.Error())
 	}
 	err = Execc(r.Command[0], r.Command[1:], r.Envs)
 	return
