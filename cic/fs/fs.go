@@ -18,7 +18,8 @@ type MountConfig struct {
 
 var DefaultMounts = []MountConfig{
 	devtmpfs,
-	devpts, ptmx,
+	devpts,
+	ptmx,
 	shm,
 	mqueue,
 	proc,
@@ -29,7 +30,7 @@ func Mount() (err error) {
 	for i := 0; i < len(DefaultMounts); i++ {
 		mc := DefaultMounts[i]
 		if err := os.MkdirAll(mc.Target, 0o755); err != nil {
-			continue
+			logrus.Warnf("mkdir   %+v failed err:%s", mc.Target, err.Error())
 		}
 		mc.Data = strings.Join(mc.Options, ",")
 		mc.Options = nil
