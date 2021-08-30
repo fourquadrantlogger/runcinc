@@ -15,15 +15,21 @@ type MountConfig struct {
 	Data    string
 	Options []string
 }
+type LinkConfig struct {
+	Source string
+	Target string
+}
 
 var DefaultMounts = []MountConfig{
 	devtmpfs,
 	devpts,
-	ptmx,
 	shm,
 	mqueue,
 	proc,
 	sys,
+}
+var DefaultLinks = []LinkConfig{
+	ptmx,
 }
 
 func Mount() (err error) {
@@ -43,7 +49,18 @@ func Mount() (err error) {
 	}
 	return
 }
-
+func Link() (err error) {
+	for i := 0; i < len(DefaultLinks); i++ {
+		mc := DefaultLinks[i]
+		err = syscall.Link(mc.Source, mc.Target)
+		if err != nil {
+			logrus.Errorf("link %+v failed %s", mc, err.Error())
+		} else {
+			logrus.Infof("syscall.link(Source=%s, Target=%s", mc.Source, mc.Target)
+		}
+	}
+	return
+}
 func Umount() (err error) {
 	for i := len(DefaultMounts) - 1; i >= 0; i-- {
 		mc := DefaultMounts[i]

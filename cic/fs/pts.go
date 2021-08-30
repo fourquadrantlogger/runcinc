@@ -16,8 +16,7 @@ var devpts = MountConfig{
 	},
 }
 
-var ptmx = MountConfig{
+var ptmx = LinkConfig{
 	Target: "/dev/ptmx",
 	Source: "/dev/pts/ptmx",
-	Fstype: "bind",
 }

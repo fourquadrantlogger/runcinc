@@ -93,6 +93,9 @@ func (r *Runcic) Start() (err error) {
 	if err = fs.Mount(); err != nil {
 		logrus.Errorf("fs mount failed %s", err.Error())
 	}
+	if err = fs.Link(); err != nil {
+		logrus.Errorf("fs link failed %s", err.Error())
+	}
 	go func() {
 		var ctx context.Context
 		ctx, r.cancel = context.WithCancel(context.Background())
