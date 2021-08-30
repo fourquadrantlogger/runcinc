@@ -20,16 +20,19 @@ func (r *Runcic) mountoverlay() (err error) {
 
 	return err
 }
-func realChroot(path string) error {
+func realChroot(path string) (oldRootF *os.File, err error) {
+
+	oldRootF, err = os.Open("/")
+
 	logrus.Infof("chrooting %s", path)
 	if err := syscall.Chroot(path); err != nil {
-		return fmt.Errorf("Error after fallback to chroot: %v", err)
+		return oldRootF, fmt.Errorf("Error after fallback to chroot: %v", err)
 	}
 	if err := syscall.Chdir("/"); err != nil {
-		return fmt.Errorf("Error changing to new root after chroot: %v", err)
+		return oldRootF, fmt.Errorf("Error changing to new root after chroot: %v", err)
 	}
 	logrus.Infof("chroot success %s", path)
-	return nil
+	return
 }
 
 //Execv

@@ -8,6 +8,7 @@ import (
 )
 
 type Runcic struct {
+	ParentRootfs    *os.File
 	Name            string
 	CicVolume       string
 	ContainerID     string

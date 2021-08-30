@@ -82,11 +82,13 @@ func (r *Runcic) Start() (err error) {
 	if err = r.mountoverlay(); err != nil {
 		return
 	}
-	defer utils.WaitSignal(r.postStop)
-	if err = realChroot(r.Roorfs()); err != nil {
+
+	if r.ParentRootfs, err = realChroot(r.Roorfs()); err != nil {
 		logrus.Errorf("chroot failed %s", err.Error())
 		return
 	}
+	defer r.WaitSignal(r.postStop)
+
 	if err = fs.Mount(); err != nil {
 		logrus.Errorf("fs mount failed %s", err.Error())
 	}
@@ -99,14 +101,28 @@ func (r *Runcic) Start() (err error) {
 
 	return err
 }
-func (r *Runcic) postStop(s os.Signal) {
+func (r *Runcic) postStop(s os.Signal, oldpath *os.File) {
 	logrus.Infof("recv signal %+v", s)
 	fs.Umount()
-	err := syscall.Unmount(r.Roorfs(), 0)
+	err := oldpath.Chdir()
+	if err != nil {
+		logrus.Errorf("chdir() err: %v", err)
+		return
+	}
+	err = syscall.Chroot(".")
+	if err != nil {
+		logrus.Errorf("chroot back err: %v", err)
+		return
+	} else {
+		logrus.Infof("chroot back")
+	}
+	err = syscall.Unmount(r.Roorfs(), 0)
 	if err != nil {
 		logrus.Errorf("umount overlay failed %s", r.Roorfs())
+		return
 	} else {
 		logrus.Infof("umount overlay %v", r.Roorfs())
 	}
 	logrus.Infof("runcic exit")
+	return
 }
