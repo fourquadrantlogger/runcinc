@@ -69,6 +69,6 @@ func Execc(cmd string, args []string, env []string) (err error) {
 	c.Stdout = os.Stdout
 	c.Stdin = os.Stdin
 	logrus.Infof("exec %s %+v env[%+v]", cmd, args, env)
-	c.Start()
+	c.Run()
 	return
 }
