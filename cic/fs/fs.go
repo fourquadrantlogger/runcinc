@@ -17,7 +17,8 @@ type MountConfig struct {
 }
 
 var DefaultMounts = []MountConfig{
-	devtmpfs, shm,
+	devtmpfs,
+	//shm,
 	devpts, ptmx,
 	mqueue,
 	proc,
@@ -45,7 +46,6 @@ func Mount() (err error) {
 func Umount() (err error) {
 	for i := len(DefaultMounts) - 1; i >= 0; i-- {
 		mc := DefaultMounts[i]
-
 		err = syscall.Unmount(mc.Target, 0)
 		if err != nil {
 			logrus.Errorf("unix.UMount %+v failed %s", mc.Target, err.Error())
