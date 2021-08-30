@@ -1,11 +1,15 @@
 package fs
 
+import (
+	"syscall"
+)
+
 var devpts = MountConfig{
 	Target: "/dev/pts",
 	Fstype: "devpts",
+	Flags:  syscall.MS_NOEXEC | syscall.MS_NOSUID,
 	Source: "devpts",
 	Options: []string{
-		"noexec",
 		"newinstance",
 		"ptmxmode=0666",
 		"mode=0620",
@@ -13,7 +17,7 @@ var devpts = MountConfig{
 }
 
 var ptmx = MountConfig{
-	Target:  "/dev/ptmx",
-	Source:  "/dev/pts/ptmx",
-	Options: []string{"bind"},
+	Target: "/dev/ptmx",
+	Source: "/dev/pts/ptmx",
+	Fstype: "bind",
 }

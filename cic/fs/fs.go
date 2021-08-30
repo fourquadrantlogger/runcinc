@@ -18,8 +18,8 @@ type MountConfig struct {
 
 var DefaultMounts = []MountConfig{
 	devtmpfs,
-	//shm,
 	devpts, ptmx,
+	shm,
 	mqueue,
 	proc,
 	sys,
@@ -33,7 +33,7 @@ func Mount() (err error) {
 		}
 		mc.Data = strings.Join(mc.Options, ",")
 		mc.Options = nil
-		err = syscall.Mount(mc.Source, mc.Target, mc.Fstype, 0, mc.Data)
+		err = syscall.Mount(mc.Source, mc.Target, mc.Fstype, mc.Flags, mc.Data)
 		if err != nil {
 			logrus.Errorf("unix.Mount %+v failed %s", mc, err.Error())
 		} else {
