@@ -89,5 +89,8 @@ func (r *Runcic) Start() (err error) {
 		logrus.Errorf("fs mount failed %s", err.Error())
 	}
 	err = Execc(r.Command[0], r.Command[1:], r.Envs)
-	return
+	if err != nil {
+		logrus.Errorf("exec exited", err.Error())
+	}
+	return err
 }
