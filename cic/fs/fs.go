@@ -2,9 +2,9 @@ package fs
 
 import (
 	"github.com/sirupsen/logrus"
-	"golang.org/x/sys/unix"
 	"os"
 	"strings"
+	"syscall"
 )
 
 type MountConfig struct {
@@ -29,7 +29,8 @@ func Mount() (err error) {
 		if err := os.MkdirAll(mc.Target, 0o755); err != nil {
 			return err
 		}
-		err = unix.Mount(mc.Source, mc.Target, mc.Fstype, 0, strings.Join(mc.Options, ","))
+		logrus.Infof("syscall.Mount(Source=%s, Target=%s, Fstype=%s,Options=%+v", mc.Source, mc.Target, mc.Fstype, mc.Options)
+		err = syscall.Mount(mc.Source, mc.Target, mc.Fstype, 0, strings.Join(mc.Options, ","))
 		if err != nil {
 			logrus.Errorf("unix.Mount %+v failed %s", mc, err.Error())
 		}
