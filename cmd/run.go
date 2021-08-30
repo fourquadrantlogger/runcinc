@@ -19,6 +19,7 @@ var cmdRun = &cobra.Command{
 	Long:  ``,
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+
 		image := args[0]
 		cmds := args[1:]
 		cfg := cic.CicConfig{
