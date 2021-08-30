@@ -19,6 +19,7 @@ var cmdRun = &cobra.Command{
 	Long:  ``,
 	Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
+
 		image := args[0]
 		cmds := args[1:]
 		cfg := cic.CicConfig{
@@ -40,6 +41,6 @@ func init() {
 	flagSet.StringSliceVarP(&envs, "env", "e", []string{}, "--env VAR1=value1")
 	flagSet.StringVar(&name, "name", "", "--name mycic")
 	flagSet.StringVar(&cicVolume, "cicvolume", "", "--cicvolume /cicvolume")
-	flagSet.StringVar(&imageRoot, "imageroot", "", "--imageroot /image")
+	flagSet.StringVar(&imageRoot, "imageroot", "/image", "--imageroot /image")
 	flagSet.StringVar(&imagePullPolicy, "imagePullPolicy", "", "--imagePullPolicy IfNotPresent")
 }
