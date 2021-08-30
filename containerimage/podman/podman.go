@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"github.com/bitfield/script"
 	log "github.com/sirupsen/logrus"
+	"os"
+	"os/exec"
 	"runcic/containerimage/common"
 	"strings"
 	"time"
@@ -15,8 +17,9 @@ type Podman struct {
 }
 
 func (c *Podman) Spec(image string) (img *common.Image) {
-	cmds:=fmt.Sprintf("podman --root %s image inspect %s",c.Root,image)
-	result, err := script.Exec(cmds).String()
+	cmds := fmt.Sprintf("podman --root %s image inspect %s", c.Root, image)
+	speccmd := script.Exec(cmds)
+	result, err := speccmd.String()
 	log.Info(cmds)
 	if err != nil {
 		log.Errorf("podman image inspect failed: %v", err.Error())
@@ -42,7 +45,14 @@ func (c *Podman) Spec(image string) (img *common.Image) {
 	return
 }
 func (c *Podman) Pull(image string) {
-	script.Exec(fmt.Sprintf("podman --root= %s  image pull %s",c.Root,image)).Stdout()
+	log.Infof("podman image  start pull %s", image)
+	pullcmd := exec.Command("podman", "--root="+c.Root, "image", "pull", image)
+	pullcmd.Stdout = os.Stdout
+	err := pullcmd.Run()
+	if err != nil {
+		log.Errorf("podman image pull failed: %v", err.Error())
+		return
+	}
 	return
 }
 

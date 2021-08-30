@@ -50,7 +50,7 @@ func Exec(cmd string, args []string, env []string) error {
 				fmt.Println("Recovered in f", r)
 			}
 		}()
-		logrus.Infof("exec ing %s %+s %+v", cmd,args,env)
+		logrus.Infof("exec ing %s %+s %+v", cmd, args, env)
 		err := syscall.Exec(cmd, args, env)
 		if err != syscall.EINTR { //nolint:errorlint // unix errors are bare
 			return err
@@ -59,10 +59,16 @@ func Exec(cmd string, args []string, env []string) error {
 }
 
 func Execc(cmd string, args []string, env []string) (err error) {
-	c := exec.Command(cmd, args...)
+	name, err := exec.LookPath(cmd)
+	if err != nil {
+		logrus.Infof("exec.LookPath %s not found,error %v", err.Error())
+		return err
+	}
+	c := exec.Command(name, args...)
 	c.Env = env
 	c.Stdout = os.Stdout
 	c.Stdin = os.Stdin
+	logrus.Infof("exec %s %+v env[%+v]")
 	c.Start()
 	return
 }

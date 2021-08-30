@@ -5,6 +5,7 @@ type CicConfig struct {
 	Cmd             []string `json:"Cmd"`
 	ImagePullPolicy ImagePullPolicy
 	Image           string
+	ImageRoot       string
 	Name            string
 	CicVolume       string
 }

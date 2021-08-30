@@ -10,6 +10,7 @@ var (
 	envs            []string
 	name            string
 	imagePullPolicy string = string(cic.ImagePullPolicyfNotPresent)
+	imageRoot       string = "/image"
 	cicVolume       string = ""
 )
 var cmdRun = &cobra.Command{
@@ -25,6 +26,7 @@ var cmdRun = &cobra.Command{
 			cmds,
 			cic.ImagePullPolicy(imagePullPolicy),
 			image,
+			imageRoot,
 			name,
 			cicVolume,
 		}
@@ -38,5 +40,6 @@ func init() {
 	flagSet.StringSliceVarP(&envs, "env", "e", []string{}, "--env VAR1=value1")
 	flagSet.StringVar(&name, "name", "", "--name mycic")
 	flagSet.StringVar(&cicVolume, "cicvolume", "", "--cicvolume /cicvolume")
+	flagSet.StringVar(&imageRoot, "imageroot", "", "--imageroot /image")
 	flagSet.StringVar(&imagePullPolicy, "imagePullPolicy", "", "--imagePullPolicy IfNotPresent")
 }
