@@ -118,7 +118,7 @@ func (r *Runcic) postStop(s os.Signal, oldpath *os.File) {
 	}
 	err = syscall.Unmount(r.Roorfs(), 0)
 	if err != nil {
-		logrus.Errorf("umount overlay failed %s err:%v", r.Roorfs(), err.Error())
+		logrus.Errorf("umount overlay failed %s", r.Roorfs())
 		return
 	} else {
 		logrus.Infof("umount overlay %v", r.Roorfs())
