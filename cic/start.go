@@ -84,6 +84,6 @@ func (r *Runcic) Start() (err error) {
 		logrus.Errorf("chroot failed %s", err.Error())
 		return
 	}
-	err = Execv(r.Command[0], r.Command[1:], r.Envs)
+	err = Execc(r.Command[0], r.Command[1:], r.Envs)
 	return
 }

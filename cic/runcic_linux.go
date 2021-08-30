@@ -2,6 +2,7 @@ package cic
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"syscall"
 
@@ -34,10 +35,8 @@ func realChroot(path string) error {
 //Execv
 // https://github.com/opencontainers/runc/blob/master/libcontainer/system/linux.go
 func Execv(cmd string, args []string, env []string) error {
-	logrus.Infof("execv ing %s %+s %+v", cmd,args,env)
 	name, err := exec.LookPath(cmd)
 	if err != nil {
-		logrus.Errorf("exec.LookPath(cmd) %s", err.Error())
 		return err
 	}
 
@@ -53,9 +52,17 @@ func Exec(cmd string, args []string, env []string) error {
 		}()
 		logrus.Infof("exec ing %s %+s %+v", cmd,args,env)
 		err := syscall.Exec(cmd, args, env)
-		logrus.Errorf("syscall.Exec(cmd, args, env) %s", err.Error())
 		if err != syscall.EINTR { //nolint:errorlint // unix errors are bare
 			return err
 		}
 	}
+}
+
+func Execc(cmd string, args []string, env []string) (err error) {
+	c := exec.Command(cmd, args...)
+	c.Env = env
+	c.Stdout = os.Stdout
+	c.Stdin = os.Stdin
+	c.Start()
+	return
 }
