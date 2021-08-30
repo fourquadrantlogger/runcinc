@@ -54,7 +54,7 @@ func Run(cfg CicConfig) (err error) {
 	}
 
 	if err = run.Start(); err != nil {
-		logrus.Errorf("start cic by image %s fail,error: %s", run.Image.Image, err.Error())
+		logrus.Errorf("start image %s %+v fail,error: %s", run.Image.Image, run.Command, err.Error())
 		return
 	}
 	return
