@@ -14,21 +14,31 @@ type Runcic struct {
 	Name            string
 	CicVolume       string
 	ContainerID     string
-	Image           *common.Image
+	Images          []*common.Image
 	Command         []string
 	Envs            []string
 	Started         time.Time
 	ImagePullPolicy ImagePullPolicy
 }
 
+func (r *Runcic) ImageArray() (imgs []string) {
+	for i := 0; i < len(r.Images); i++ {
+		imgs = append(imgs, r.Images[i].Image)
+	}
+	return
+}
 func (r *Runcic) Roorfs() (path string) {
 	path = OverlayRoot + string(os.PathSeparator) + r.Name
 	return
 }
 
 func (r *Runcic) mountops() string {
+	lower := make([]string, 0)
+	for i := 0; i < len(r.Images); i++ {
+		lower = append(lower, r.Images[i].Lower...)
+	}
 	mountops := strings.Join([]string{
-		"lowerdir=" + strings.Join(r.Image.Lower, ":"),
+		"lowerdir=" + strings.Join(lower, ":"),
 		"upperdir=" + r.CicVolume + string(os.PathSeparator) + "up",
 		"workdir=" + r.CicVolume + string(os.PathSeparator) + "work",
 	}, ",")
