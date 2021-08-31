@@ -58,13 +58,16 @@ func Run(cfg CicConfig) (err error) {
 	}
 
 	//todo 创建之前，需要检测是否已存在
+	run.mergeEnv()
+	run.mergeCmd()
 	if run.Name == "" {
-		if err = run.Create(); err != nil {
-			logrus.Errorf("create cic by images %+v fail,error: %s", run.ImageArray(), err.Error())
-			return
-		}
-	} else {
-		//todo 已存在
+		run.ContainerID = newID()
+		run.Name = newName()
+	}
+
+	if err = run.Create(); err != nil {
+		logrus.Errorf("create cic by images %+v fail,error: %s", run.ImageArray(), err.Error())
+		return
 	}
 
 	if err = run.Start(); err != nil {

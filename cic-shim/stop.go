@@ -1,14 +1,15 @@
-package cic
+package cic_shim
 
 import (
 	"github.com/sirupsen/logrus"
+	"golang.org/x/sys/unix"
 	"os"
 	"os/signal"
 	"runcic/cic/fs"
 	"syscall"
 )
 
-func (r *Runcic) postStop(s os.Signal, oldpath *os.File) {
+func (r *RuncicShim) postStop(s os.Signal, oldpath *os.File) {
 	logrus.Infof("recv signal %+v", s)
 	logrus.Info("sending cic signal")
 	r.cancel()
@@ -37,13 +38,10 @@ func (r *Runcic) postStop(s os.Signal, oldpath *os.File) {
 	return
 }
 
-func (r *Runcic) Stop() (err error) {
-	return
-}
-
-func (r *Runcic) WaitSignal(f func(sig os.Signal, oldpath *os.File)) {
-	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
-	s := <-sigs
+//https://github.com/containerd/containerd/blob/main/cmd/containerd-shim/shim_linux.go
+func (r *RuncicShim) WaitSignal(f func(sig os.Signal, oldpath *os.File)) {
+	signals := make(chan os.Signal, 32)
+	signal.Notify(signals, unix.SIGTERM, unix.SIGINT, unix.SIGCHLD, unix.SIGPIPE)
+	s := <-signals
 	f(s, r.ParentRootfs)
 }

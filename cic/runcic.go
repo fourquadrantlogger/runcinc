@@ -1,7 +1,6 @@
 package cic
 
 import (
-	"context"
 	"errors"
 	"github.com/sirupsen/logrus"
 	"os"
@@ -13,7 +12,6 @@ import (
 
 type Runcic struct {
 	ParentRootfs    *os.File
-	cancel          context.CancelFunc
 	Name            string
 	CicVolume       string
 	ContainerID     string
