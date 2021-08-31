@@ -6,13 +6,22 @@ import (
 
 func (r *Runcic) Create() (err error) {
 	//merge envs
-	for _, v := range r.Image.Env {
+	for _, img := range r.Images {
 		//todo 需要深入研究，为啥envs是字符串
-		r.Envs = append(r.Envs, v)
+		for _, v := range img.Env {
+			//todo 需要深入研究，为啥envs是字符串
+			r.Envs = append(r.Envs, v)
+		}
 	}
-	//merge cmd
+
+	//merge cmd,use firstimage cmd notnull
 	if len(r.Command) == 0 {
-		r.Command = r.Image.Cmd
+		for i := 0; i < len(r.Images); i++ {
+			if len(r.Images[i].Cmd) > 0 {
+				r.Command = r.Images[i].Cmd
+				break
+			}
+		}
 	}
 
 	//create name &id
