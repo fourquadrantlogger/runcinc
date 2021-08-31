@@ -40,7 +40,12 @@ func (c *Podman) Spec(image string) (img *common.Image) {
 		}
 		img.Env = images[0].Config.Env
 		img.Cmd = images[0].Config.Cmd
-		img.Lower = strings.Split(strings.TrimSpace(images[0].GraphDriver.Data.LowerDir), ":")
+		lower := strings.Split(strings.TrimSpace(images[0].GraphDriver.Data.LowerDir), ":")
+		for i := 0; i < len(lower); i++ {
+			if strings.TrimSpace(lower[i]) != "" {
+				img.Lower = append(img.Lower, lower[i])
+			}
+		}
 		img.Lower = append(img.Lower, strings.TrimSpace(images[0].GraphDriver.Data.UpperDir))
 	}
 	return
