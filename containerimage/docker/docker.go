@@ -13,11 +13,10 @@ import (
 )
 
 type Docker struct {
-	Root string
 }
 
 func (c *Docker) Spec(image string) (img *common.Image) {
-	cmds := fmt.Sprintf("docker --root %s image inspect %s", c.Root, image)
+	cmds := fmt.Sprintf("docker image inspect %s", image)
 	speccmd := script.Exec(cmds)
 	result, err := speccmd.String()
 	log.Info(cmds)
@@ -52,7 +51,7 @@ func (c *Docker) Spec(image string) (img *common.Image) {
 }
 func (c *Docker) Pull(image string) {
 	log.Infof("docker image  start pull %s", image)
-	pullcmd := exec.Command("docker", "--root="+c.Root, "image", "pull", image)
+	pullcmd := exec.Command("docker", "image", "pull", image)
 	pullcmd.Stdout = os.Stdout
 	err := pullcmd.Run()
 	if err != nil {
