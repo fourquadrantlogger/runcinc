@@ -50,11 +50,11 @@ func (c *Podman) Spec(image string) (img *common.Image) {
 	}
 	return
 }
-func (c *Podman) Pull(image string) {
+func (c *Podman) Pull(image string) (err error) {
 	log.Infof("podman image  start pull %s", image)
 	pullcmd := exec.Command("podman", "--root="+c.Root, "image", "pull", image)
 	pullcmd.Stdout = os.Stdout
-	err := pullcmd.Run()
+	err = pullcmd.Run()
 	if err != nil {
 		log.Errorf("podman image pull failed: %v", err.Error())
 		return

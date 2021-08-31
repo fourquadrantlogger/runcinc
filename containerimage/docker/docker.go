@@ -49,11 +49,11 @@ func (c *Docker) Spec(image string) (img *common.Image) {
 	}
 	return
 }
-func (c *Docker) Pull(image string) {
+func (c *Docker) Pull(image string) (err error) {
 	log.Infof("docker image  start pull %s", image)
 	pullcmd := exec.Command("docker", "image", "pull", image)
 	pullcmd.Stdout = os.Stdout
-	err := pullcmd.Run()
+	err = pullcmd.Run()
 	if err != nil {
 		log.Errorf("docker image pull failed: %v", err.Error())
 		return

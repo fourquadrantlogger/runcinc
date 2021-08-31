@@ -19,15 +19,23 @@ func Run(cfg CicConfig) (err error) {
 			Image: cfg.Images[i],
 		})
 	}
-	var pullimage = func(img string) {
+	var pullimage = func(img string) (pullerr error) {
 		logrus.Infof("runcic imagedriver pulling image %s", img)
-		containerimage.Driver().Pull(img)
-		logrus.Infof("runcic imagedriver pulled image %s", img)
+		pullerr = containerimage.Driver().Pull(img)
+		if pullerr != nil {
+
+		} else {
+			logrus.Infof("runcic imagedriver pulled image %s", img)
+		}
+		return
 	}
 	switch run.ImagePullPolicy {
 	case imagePullPolicyAlways:
 		for i := 0; i < len(run.Images); i++ {
-			pullimage(run.Images[i].Image)
+			err = pullimage(run.Images[i].Image)
+			if err != nil {
+				return
+			}
 		}
 	default:
 		for i := 0; i < len(run.Images); i++ {

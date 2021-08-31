@@ -3,6 +3,7 @@ package fs
 import (
 	"github.com/sirupsen/logrus"
 	"os"
+	"runcic/utils"
 	"strings"
 	"syscall"
 )
@@ -52,7 +53,17 @@ func Mount() (err error) {
 func Link() (err error) {
 	for i := 0; i < len(DefaultLinks); i++ {
 		mc := DefaultLinks[i]
-		err = syscall.Link(mc.Source, mc.Target)
+		if utils.Exists(mc.Target) {
+			err = os.Remove(mc.Target)
+			if err != nil {
+				logrus.Errorf("delete %+v failed %s", mc.Target, err.Error())
+				return
+			} else {
+				logrus.Infof("syscall.link(Source=%s, Target=%s", mc.Source, mc.Target)
+			}
+		}
+
+		err = os.Symlink(mc.Source, mc.Target)
 		if err != nil {
 			logrus.Errorf("link %+v failed %s", mc, err.Error())
 		} else {
