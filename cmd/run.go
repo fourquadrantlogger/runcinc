@@ -4,7 +4,6 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"runcic/cic"
-	"strings"
 )
 
 var (
@@ -13,7 +12,7 @@ var (
 	imagePullPolicy string = string(cic.ImagePullPolicyfNotPresent)
 	imageRoot       string = "/image"
 	cicVolume       string = ""
-	ciccmd          string
+	images          []string
 )
 var cmdRun = &cobra.Command{
 	Use:   "run",
@@ -24,12 +23,11 @@ var cmdRun = &cobra.Command{
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 
-		image := args
 		cfg := cic.CicConfig{
 			envs,
-			strings.Split(ciccmd, " "),
+			args,
 			cic.ImagePullPolicy(imagePullPolicy),
-			image,
+			images,
 			imageRoot,
 			name,
 			cicVolume,
@@ -43,7 +41,7 @@ func init() {
 	flagSet := cmdRun.Flags()
 	flagSet.SetInterspersed(false)
 	flagSet.StringSliceVarP(&envs, "env", "e", []string{}, "--env VAR1=value1")
-	flagSet.StringVar(&ciccmd, "cmd", "", "--cmd `sleep 10h`")
+	flagSet.StringSliceVarP(&images, "image", "i", []string{}, "--image ubuntu:latest")
 	flagSet.StringVar(&name, "name", "", "--name mycic")
 	flagSet.StringVar(&cicVolume, "cicvolume", "", "--cicvolume /cicvolume")
 	flagSet.StringVar(&imageRoot, "imageroot", "/image", "--imageroot /image")
