@@ -12,9 +12,7 @@ var drivemap = map[string]common.ImageDriver{
 	"podman": &podman.Podman{
 		Root: "/image",
 	},
-	"docker": &docker.Docker{
-		Root: "/image",
-	},
+	"docker": &docker.Docker{},
 }
 
 func init() {
