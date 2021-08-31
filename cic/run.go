@@ -4,7 +4,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"runcic/containerimage"
 	"runcic/containerimage/common"
-	"runcic/containerimage/podman"
 )
 
 func Run(cfg CicConfig) (err error) {
@@ -20,9 +19,6 @@ func Run(cfg CicConfig) (err error) {
 			Image: cfg.Images[i],
 		})
 	}
-	containerimage.SetDriver(&podman.Podman{
-		Root: cfg.ImageRoot,
-	})
 	var pullimage = func(img string) {
 		logrus.Infof("runcic imagedriver pulling image %s", img)
 		containerimage.Driver().Pull(img)

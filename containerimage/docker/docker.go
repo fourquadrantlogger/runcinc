@@ -1,4 +1,4 @@
-package podman
+package docker
 
 import (
 	"encoding/json"
@@ -12,24 +12,24 @@ import (
 	"time"
 )
 
-type Podman struct {
+type Docker struct {
 	Root string
 }
 
-func (c *Podman) Spec(image string) (img *common.Image) {
-	cmds := fmt.Sprintf("podman --root %s image inspect %s", c.Root, image)
+func (c *Docker) Spec(image string) (img *common.Image) {
+	cmds := fmt.Sprintf("docker --root %s image inspect %s", c.Root, image)
 	speccmd := script.Exec(cmds)
 	result, err := speccmd.String()
 	log.Info(cmds)
 	if err != nil {
-		log.Errorf("podman image inspect failed: %v", err.Error())
+		log.Errorf("docker image inspect failed: %v", err.Error())
 		log.Errorf(result)
 		return
 	}
 	var images = make([]podmanImageInspect, 0)
 	err = json.Unmarshal([]byte(result), &images)
 	if err != nil {
-		log.Errorf("unmarshal podman inspect %s json failed: %v", image, err.Error())
+		log.Errorf("unmarshal docker inspect %s json failed: %v", image, err.Error())
 		log.Errorf(result)
 		return
 	}
@@ -50,13 +50,13 @@ func (c *Podman) Spec(image string) (img *common.Image) {
 	}
 	return
 }
-func (c *Podman) Pull(image string) {
-	log.Infof("podman image  start pull %s", image)
-	pullcmd := exec.Command("podman", "--root="+c.Root, "image", "pull", image)
+func (c *Docker) Pull(image string) {
+	log.Infof("docker image  start pull %s", image)
+	pullcmd := exec.Command("docker", "--root="+c.Root, "image", "pull", image)
 	pullcmd.Stdout = os.Stdout
 	err := pullcmd.Run()
 	if err != nil {
-		log.Errorf("podman image pull failed: %v", err.Error())
+		log.Errorf("docker image pull failed: %v", err.Error())
 		return
 	}
 	return
