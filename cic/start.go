@@ -1,77 +1,9 @@
 package cic
 
 import (
-	"context"
-	"errors"
 	"github.com/sirupsen/logrus"
-	"os"
 	"runcic/cic/fs"
-	"runcic/utils"
-	"syscall"
 )
-
-func (r *Runcic) rootfspath() (err error) {
-	work, worke := os.Stat(r.Roorfs())
-	if worke != nil {
-		utils.Mkdirp(r.Roorfs())
-	} else {
-		if !work.IsDir() {
-			err = errors.New("rootfs should be dir!" + r.Roorfs())
-			logrus.Warnf(err.Error())
-		}
-	}
-	logrus.Infof("rootfs ok,%s", r.Roorfs())
-	return
-}
-func (r *Runcic) cicvolume() (err error) {
-	if r.CicVolume == "" {
-		err = errors.New("cicvolume not set!")
-		logrus.Errorf(err.Error())
-		return err
-	}
-	stat, fe := os.Stat(r.CicVolume)
-	if fe != nil {
-		logrus.Errorf(fe.Error())
-		return fe
-	}
-	if !stat.IsDir() {
-		err = errors.New("cicvolume should be dir!,fix your cicvolume: " + r.CicVolume)
-		logrus.Errorf(err.Error())
-		return
-	}
-
-	up, upe := os.Stat(r.CicVolume + "/" + "up")
-	if upe != nil {
-		err = os.Mkdir(r.CicVolume+"/"+"up", os.ModeDir)
-		if err != nil {
-			logrus.Errorf("mkdir cicvolume/up dir fail,error: %s", err.Error())
-			return err
-		}
-	} else {
-		if !up.IsDir() {
-			err = errors.New("cicvolume/up should be dir!" + r.CicVolume)
-			logrus.Warnf(err.Error())
-		}
-	}
-	logrus.Infof("cicvolume updir ok,%s", r.CicVolume+"/"+"up")
-
-	work, worke := os.Stat(r.CicVolume + "/" + "work")
-	if worke != nil {
-		err = os.Mkdir(r.CicVolume+"/"+"work", os.ModeDir)
-		if err != nil {
-			logrus.Errorf("mkdir cicvolume/work dir fail,error: %s", err.Error())
-			return err
-		}
-	} else {
-		if !work.IsDir() {
-			err = errors.New("cicvolume/work should be dir!" + r.CicVolume)
-			logrus.Warnf(err.Error())
-		}
-	}
-
-	logrus.Infof("cicvolume workdir ok,%s", r.CicVolume+"/"+"work")
-	return
-}
 
 func (r *Runcic) Start() (err error) {
 	if err = r.cicvolume(); err != nil {
@@ -88,6 +20,7 @@ func (r *Runcic) Start() (err error) {
 		logrus.Errorf("chroot failed %s", err.Error())
 		return
 	}
+
 	defer r.WaitSignal(r.postStop)
 
 	if err = fs.Mount(); err != nil {
@@ -97,41 +30,11 @@ func (r *Runcic) Start() (err error) {
 		logrus.Errorf("fs link failed %s", err.Error())
 	}
 	go func() {
-		var ctx context.Context
-		ctx, r.cancel = context.WithCancel(context.Background())
-		err = Execc(ctx, r.Command[0], r.Command[1:], r.Envs)
+		err = Execv(r.Command[0], r.Command[1:], r.Envs)
 		if err != nil {
 			logrus.Errorf("exec exited %v", err.Error())
 		}
 	}()
 
 	return err
-}
-func (r *Runcic) postStop(s os.Signal, oldpath *os.File) {
-	logrus.Infof("recv signal %+v", s)
-	logrus.Info("sending cic signal")
-	r.cancel()
-	logrus.Info("cic exited")
-	fs.Umount()
-	err := oldpath.Chdir()
-	if err != nil {
-		logrus.Errorf("chdir() err: %v", err)
-		return
-	}
-	err = syscall.Chroot(".")
-	if err != nil {
-		logrus.Errorf("chroot back err: %v", err)
-		return
-	} else {
-		logrus.Infof("chroot back")
-	}
-	err = syscall.Unmount(r.Roorfs(), 0)
-	if err != nil {
-		logrus.Errorf("umount overlay failed %s,err: %v", r.Roorfs(), err.Error())
-		return
-	} else {
-		logrus.Infof("umount overlay %v", r.Roorfs())
-	}
-	logrus.Infof("runcic exit")
-	return
 }
