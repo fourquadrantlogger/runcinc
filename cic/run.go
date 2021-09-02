@@ -8,6 +8,7 @@ import (
 
 func Run(cfg CicConfig) (err error) {
 	run := &Runcic{
+		CopyEnv:         cfg.CopyParentEnv,
 		Name:            cfg.Name,
 		Command:         cfg.Cmd,
 		CicVolume:       cfg.CicVolume,

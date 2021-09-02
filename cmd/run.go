@@ -14,6 +14,7 @@ var cmdWait = &cobra.Command{
 
 		cfg := cic.CicConfig{
 			envs,
+			copyParentEnv,
 			args,
 			cic.ImagePullPolicy(imagePullPolicy),
 			images,
