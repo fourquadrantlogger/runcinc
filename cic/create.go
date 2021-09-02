@@ -4,7 +4,7 @@ import (
 	"runcic/utils"
 )
 
-func (r *Runcic) mergeEnv() {
+func (r *Runcic) mergeEnv(cmdenv []string) {
 	for _, img := range r.Images {
 		//todo 需要深入研究，为啥envs是字符串
 		for _, v := range img.Env {
@@ -12,6 +12,7 @@ func (r *Runcic) mergeEnv() {
 			r.Envs = append(r.Envs, v)
 		}
 	}
+	r.Envs = append(r.Envs, cmdenv...)
 }
 func (r *Runcic) mergeCmd() {
 	//merge cmd,use firstimage cmd notnull

@@ -8,7 +8,6 @@ import (
 
 func Run(cfg CicConfig) (err error) {
 	run := &Runcic{
-		Envs:            cfg.Env,
 		Name:            cfg.Name,
 		Command:         cfg.Cmd,
 		CicVolume:       cfg.CicVolume,
@@ -58,7 +57,7 @@ func Run(cfg CicConfig) (err error) {
 	}
 
 	//todo 创建之前，需要检测是否已存在
-	run.mergeEnv()
+	run.mergeEnv(cfg.Env)
 	run.mergeCmd()
 	if run.Name == "" {
 		run.ContainerID = newID()

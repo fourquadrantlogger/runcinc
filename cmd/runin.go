@@ -29,7 +29,7 @@ var cmdRun = &cobra.Command{
 			name,
 			cicVolume,
 		}
-		log.Infof("runcic begin run:config %+v", cfg)
+		log.Infof("runcic run:config %+v", cfg)
 		cic.Run(cfg)
 	},
 }
