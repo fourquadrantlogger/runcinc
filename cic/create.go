@@ -6,13 +6,18 @@ import (
 
 func (r *Runcic) mergeEnv(cmdenv []string) {
 	for _, img := range r.Images {
-		//todo 需要深入研究，为啥envs是字符串
+
 		for _, v := range img.Env {
-			//todo 需要深入研究，为啥envs是字符串
+
 			r.Envs = append(r.Envs, v)
 		}
 	}
 	r.Envs = append(r.Envs, cmdenv...)
+	envmap := utils.ParseEnvs(r.Envs)
+	r.Envs = make([]string, 0)
+	for k, v := range envmap {
+		r.Envs = append(r.Envs, k+"="+v)
+	}
 }
 func (r *Runcic) mergeCmd() {
 	//merge cmd,use firstimage cmd notnull
