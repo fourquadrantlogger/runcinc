@@ -38,7 +38,7 @@ func (r *Runcic) Start() (err error) {
 	if err = fs.Link(); err != nil {
 		logrus.Errorf("fs link failed %s", err.Error())
 	}
-	r.SetEnv(false)
+	r.SetEnv(r.CopyEnv)
 	logrus.Infof("%+v %+v", r.Command, r.Envs)
 
 	err = Execv(r.Command[0], r.Command[1:], r.Envs)

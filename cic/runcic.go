@@ -2,11 +2,14 @@ package cic
 
 import (
 	"errors"
+	"fmt"
 	"github.com/sirupsen/logrus"
 	"os"
+	"os/exec"
 	"runcic/containerimage/common"
 	"runcic/utils"
 	"strings"
+	"syscall"
 	"time"
 )
 
@@ -18,6 +21,7 @@ type Runcic struct {
 	Images          []*common.Image
 	Command         []string
 	Envs            []string
+	CopyEnv         bool
 	Started         time.Time
 	ImagePullPolicy ImagePullPolicy
 }
@@ -107,4 +111,55 @@ func (r *Runcic) cicvolume() (err error) {
 
 	logrus.Infof("cicvolume workdir ok,%s", r.CicVolume+"/"+"work")
 	return
+}
+
+//Execv
+// https://github.com/opencontainers/runc/blob/master/libcontainer/system/linux.go
+func Execv(cmd string, args []string, env []string) error {
+	name, err := exec.LookPath(cmd)
+	if err != nil {
+		return err
+	}
+
+	return Exec(name, args, env)
+}
+
+func (r *Runcic) mountoverlay() (err error) {
+	mountops := r.mountops()
+	err = syscall.Mount("overlay", r.Roorfs(), "overlay", 0, mountops)
+	logrus.Infof("mount overlay overlay -o %s %s ", mountops, r.Roorfs())
+	if err != nil {
+		logrus.Errorf("mount overlay fail,errors %s", err.Error())
+		return
+	}
+
+	return err
+}
+func realChroot(path string) (oldRootF *os.File, err error) {
+
+	oldRootF, err = os.Open("/")
+
+	logrus.Infof("chrooting %s", path)
+	if err := syscall.Chroot(path); err != nil {
+		return oldRootF, fmt.Errorf("Error after fallback to chroot: %v", err)
+	}
+	if err := syscall.Chdir("/"); err != nil {
+		return oldRootF, fmt.Errorf("Error changing to new root after chroot: %v", err)
+	}
+	logrus.Infof("chroot success %s", path)
+	return
+}
+
+func Exec(cmd string, args []string, env []string) error {
+	for {
+		defer func() {
+			if r := recover(); r != nil {
+				fmt.Println("Recovered in f", r)
+			}
+		}()
+		err := syscall.Exec(cmd, args, env)
+		if err != syscall.EINTR { //nolint:errorlint // unix errors are bare
+			return err
+		}
+	}
 }
