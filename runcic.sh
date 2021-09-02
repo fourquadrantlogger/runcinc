@@ -1,6 +1,6 @@
 name=$1
 cicroot=/runcic/overlay/${name}
-runcic ${@:2}
+runcic --name $name ${@:2}
 umount ${cicroot}/dev/mqueue
 umount ${cicroot}/dev/shm
 umount ${cicroot}/dev/pts

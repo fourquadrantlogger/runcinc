@@ -40,7 +40,7 @@ func init() {
 	//cmdRun.Flags() the same as cmdWait.Flags()
 	flagsets := []*pflag.FlagSet{cmdRun.Flags(), cmdWait.Flags()}
 	for i := 0; i < len(flagsets); i++ {
-		flagsets[i].Bool("copyenv", false, "--copyenv")
+		flagsets[i].BoolVar(&copyParentEnv, "copyenv", false, "--copyenv")
 		flagsets[i].SetInterspersed(false)
 		flagsets[i].StringSliceVarP(&envs, "env", "e", []string{}, "--env VAR1=value1")
 		flagsets[i].StringSliceVarP(&images, "image", "i", []string{}, "--image ubuntu:latest")
