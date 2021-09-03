@@ -9,7 +9,7 @@ var (
 	envs            []string
 	copyParentEnv   bool
 	name            string
-	imagePullPolicy string = string(cic.ImagePullPolicyfNotPresent)
+	imagePullPolicy string //=string(cic.ImagePullPolicyfNotPresent)
 	imageRoot       string = "/image"
 	cicVolume       string = ""
 	images          []string

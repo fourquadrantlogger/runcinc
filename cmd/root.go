@@ -26,9 +26,9 @@ func parse(args []string) {
 	} else {
 		cmd = args[endIdx+1:]
 	}
-	var flags map[string][]string
+	var flags = make(map[string][]string)
 	var unknownCmds []string
-	flags, unknownCmds = rflag.ParseFlag(os.Args, []string{"env"})
+	flags, unknownCmds = rflag.ParseFlag(args[:endIdx-1], []string{"env"})
 	if endIdx == len(args)-1 {
 		fmt.Errorf("%+v", unknownCmds)
 	} else {

@@ -24,6 +24,7 @@ func stringshas(strs []string, s string) (idx int) {
 //如果flag存在重复的key，appendkey中的key对value进行append，其它key的情况则value直接替换
 func ParseFlag(args []string, appendKey []string) (flags map[string][]string, unknownArgs []string) {
 	flagargs := args
+	flags = make(map[string][]string)
 	for i := 0; i < len(flagargs); i++ {
 		kmatch, _ := regexp.MatchString(LongflagPattern, flagargs[i])
 		kmatchshort, _ := regexp.MatchString(ShortflagPattern, flagargs[i])
