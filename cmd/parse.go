@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func parse(args []string) (cmd, image []string, imageRoot, cicVolume string, copyParentEnv bool, err error) {
+func parse(args []string) (cmd, image, env []string, imageRoot, cicVolume, name string, copyParentEnv bool, err error) {
 	var imageIdx = func(args []string) (imageIndex int) {
 		imagePattern := `[A-Za-z0-9_\.\-/]+:[A-Za-z0-9_\.\-/]+`
 		imageIndex = -1
@@ -43,12 +43,17 @@ func parse(args []string) (cmd, image []string, imageRoot, cicVolume string, cop
 	}
 
 	flags, _ = rflag.ParseFlag(args[:imageIndex], []string{"env"})
-
+	if _, h := flags["env"]; h {
+		env = flags["env"]
+	}
 	if _, h := flags["cicimage"]; h {
 		imageRoot = flags["cicimage"][0]
 	}
 	if _, h := flags["cicvolume"]; h {
 		cicVolume = flags["cicvolume"][0]
+	}
+	if _, h := flags["name"]; h {
+		name = flags["name"][0]
 	}
 	_, copyParentEnv = flags["envcopy"]
 	return

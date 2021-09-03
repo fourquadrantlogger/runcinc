@@ -2,11 +2,17 @@ package rflag
 
 import (
 	"regexp"
+	"strings"
 )
 
 const (
 	LongflagPattern  = `^--[A-Za-z0-9][A-Za-z0-9_\.\-]*$`
 	ShortflagPattern = `^-[A-Za-z0-9][A-Za-z0-9_\.\-]*$`
+)
+
+var (
+	ShortKVflagPattern = ShortflagPattern[:len(ShortflagPattern)-1] + `=\S+`
+	LongKVflagPattern  = LongflagPattern[:len(LongflagPattern)-1] + `=\S+`
 )
 
 type IndexFlag func(args []string) (idx int)
@@ -28,11 +34,36 @@ func ParseFlag(args []string, appendKey []string) (flags map[string][]string, un
 	for i := 0; i < len(flagargs); i++ {
 		kmatch, _ := regexp.MatchString(LongflagPattern, flagargs[i])
 		kmatchshort, _ := regexp.MatchString(ShortflagPattern, flagargs[i])
+		kvmatch, _ := regexp.MatchString(LongKVflagPattern, flagargs[i])
+		kvmatchshort, _ := regexp.MatchString(ShortKVflagPattern, flagargs[i])
 		var k string
+		var v string
 		if kmatch {
 			k = flagargs[i][2:]
 		} else if kmatchshort {
 			k = flagargs[i][1:]
+		} else if kvmatch {
+			kv := flagargs[i][2:]
+			sep := strings.Index(kv, "=")
+			k = kv[:sep]
+			v = kv[sep+1:]
+			if stringshas(appendKey, k) >= 0 {
+				flags[k] = append(flags[k], v)
+			} else {
+				flags[k] = []string{v}
+			}
+			continue
+		} else if kvmatchshort {
+			kv := flagargs[i][1:]
+			sep := strings.Index(kv, "=")
+			k = kv[:sep]
+			v = kv[sep+1:]
+			if stringshas(appendKey, k) >= 0 {
+				flags[k] = append(flags[k], v)
+			} else {
+				flags[k] = []string{v}
+			}
+			continue
 		} else {
 			unknownArgs = append(unknownArgs, flagargs[i])
 			continue
@@ -45,7 +76,7 @@ func ParseFlag(args []string, appendKey []string) (flags map[string][]string, un
 				flags[k] = []string{}
 				//existflag
 			} else {
-				v := flagargs[i+1]
+				v = flagargs[i+1]
 				i++
 				if stringshas(appendKey, k) >= 0 {
 					flags[k] = append(flags[k], v)

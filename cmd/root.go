@@ -19,8 +19,17 @@ var cfg = cic.CicConfig{
 // Execute executes the root command.
 func Execute() {
 	if len(os.Args) > 2 {
-
-		parse(os.Args[2:])
+		var imageroot, cicvolume, name string
+		cfg.Cmd, cfg.Images, cfg.Env, imageroot, cicvolume, name, cfg.CopyParentEnv, _ = parse(os.Args[2:])
+		if imageroot != "" {
+			cfg.ImageRoot = imageroot
+		}
+		if cicvolume != "" {
+			cfg.CicVolume = cicvolume
+		}
+		if name != "" {
+			cfg.Name = name
+		}
 		switch os.Args[1] {
 		case "runin":
 			cmdRun()
