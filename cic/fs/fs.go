@@ -72,10 +72,10 @@ func Link() (err error) {
 	}
 	return
 }
-func Umount() (err error) {
+func Umount(byparent string) (err error) {
 	for i := len(DefaultMounts) - 1; i >= 0; i-- {
 		mc := DefaultMounts[i]
-		err = syscall.Unmount(mc.Target, 0)
+		err = syscall.Unmount(byparent+mc.Target, 0)
 		if err != nil {
 			logrus.Errorf("unix.UMount %+v failed %s", mc.Target, err.Error())
 		} else {

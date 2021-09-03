@@ -23,8 +23,12 @@ func (r *Runcic) Start() (err error) {
 	if err = r.rootfspath(); err != nil {
 		return
 	}
-	if err = r.mountoverlay(); err != nil {
-		return
+	if r.RunWith {
+		logrus.Infof("runwith will not create overlay on %s", r.Roorfs())
+	} else {
+		if err = r.mountoverlay(); err != nil {
+			return
+		}
 	}
 
 	if r.ParentRootfs, err = realChroot(r.Roorfs()); err != nil {

@@ -14,7 +14,7 @@ func (r *RuncicShim) postStop(s os.Signal, oldpath *os.File) {
 	logrus.Info("sending cic signal")
 	r.cancel()
 	logrus.Info("cic exited")
-	fs.Umount()
+	fs.Umount("")
 	err := oldpath.Chdir()
 	if err != nil {
 		logrus.Errorf("chdir() err: %v", err)

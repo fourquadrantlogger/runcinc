@@ -15,6 +15,7 @@ import (
 
 type Runcic struct {
 	ParentRootfs    *os.File
+	RunWith         bool
 	Name            string
 	CicVolume       string
 	ContainerID     string
@@ -55,9 +56,17 @@ func (r *Runcic) rootfspath() (err error) {
 	if worke != nil {
 		utils.Mkdirp(r.Roorfs())
 	} else {
-		if !work.IsDir() {
-			err = errors.New("rootfs should be dir!" + r.Roorfs())
-			logrus.Warnf(err.Error())
+
+		if r.RunWith {
+			if !work.IsDir() {
+				err = errors.New("rootfs should be dir!" + r.Roorfs())
+				logrus.Warnf(err.Error())
+			}
+			return
+		} else {
+			err = errors.New(fmt.Sprintf("%s rootfs %s already exist!", r.Name, r.Roorfs()))
+			logrus.Errorf(err.Error())
+			return
 		}
 	}
 	logrus.Infof("rootfs ok,%s", r.Roorfs())
