@@ -5,28 +5,8 @@ import (
 	"runcic/cic"
 )
 
-var (
-	envs            []string
-	copyParentEnv   bool
-	name            string
-	imagePullPolicy string //=string(cic.ImagePullPolicyfNotPresent)
-	imageRoot       string = "/image"
-	cicVolume       string = ""
-	images          []string
-	cmd             []string
-)
+func cmdRun() {
 
-var cmdRun = func() {
-	cfg := cic.CicConfig{
-		envs,
-		copyParentEnv,
-		cmd,
-		cic.ImagePullPolicy(imagePullPolicy),
-		images,
-		imageRoot,
-		name,
-		cicVolume,
-	}
 	log.Infof("runcic run:config %+v", cfg)
 	cic.Run(cfg)
 }

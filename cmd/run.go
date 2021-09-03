@@ -1,22 +1,10 @@
 package cmd
 
 import (
-	"runcic/cic"
 	cic_shim "runcic/cic-shim"
 )
 
-var cmdWait = func() {
-
-	cfg := cic.CicConfig{
-		envs,
-		copyParentEnv,
-		cmd,
-		cic.ImagePullPolicy(imagePullPolicy),
-		images,
-		imageRoot,
-		name,
-		cicVolume,
-	}
+func cmdWait() {
 
 	cic_shim.Wait(cfg)
 }
