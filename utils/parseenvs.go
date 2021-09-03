@@ -30,7 +30,7 @@ func MergeEnv(envmap map[string]string, envs []string) {
 			k := kv[:splitIndex]
 			v := kv[splitIndex+1:]
 			if oldv, have := envmap[k]; have {
-				if k == "PATH" {
+				if strings.Contains(k, "PATH") {
 					pathValues := strings.Split(oldv, ":")
 					vValues := strings.Split(v, ":")
 					pathValues = MergeStrings(pathValues, vValues)
