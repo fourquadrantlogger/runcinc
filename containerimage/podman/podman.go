@@ -61,6 +61,17 @@ func (c *Podman) Pull(image string) (err error) {
 	}
 	return
 }
+func (c *Podman) Login(host, u, pwd string) (err error) {
+	log.Infof("podman login %s", host)
+	pullcmd := exec.Command("echo", pwd, "|", "podman", "--root="+c.Root, "login", "-u", u, "--password-stdin", host)
+	pullcmd.Stdout = os.Stdout
+	err = pullcmd.Run()
+	if err != nil {
+		log.Errorf("podman login failed: %v", err.Error())
+		return
+	}
+	return
+}
 
 type podmanImageInspect struct {
 	Id          string    `json:"Id"`

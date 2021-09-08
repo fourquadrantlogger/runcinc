@@ -10,7 +10,7 @@ import (
 var defaultImageDriver common.ImageDriver
 var drivemap = map[string]common.ImageDriver{
 	"podman": &podman.Podman{
-		Root: "/image",
+		Root: "/var/lib/containers/storage",
 	},
 	"docker": &docker.Docker{},
 }

@@ -55,7 +55,7 @@ func parse(args []string) (cmd, image, env []string, imageRoot, cicVolume, name 
 	if _, h := flags["name"]; h {
 		name = flags["name"][0]
 	}
-	_, copyParentEnv = flags["envcopy"]
+	_, copyParentEnv = flags["copyenv"]
 	return
 
 }
