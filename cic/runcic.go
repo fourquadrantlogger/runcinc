@@ -21,6 +21,7 @@ type Runcic struct {
 	ContainerID     string
 	Images          []*common.Image
 	Command         []string
+	Volume          []string
 	Envs            []string
 	CopyEnv         bool
 	Started         time.Time
@@ -50,13 +51,30 @@ func (r *Runcic) mountops() string {
 	}, ",")
 	return mountops
 }
+func (r *Runcic) mountbindvolume() (err error) {
+	for i := 0; i < len(r.Volume); i++ {
+		v := strings.Split(r.Volume[i], ":")
+		if len(v) >= 2 {
+			source, target := v[0], r.Roorfs()+v[1]
+			err = syscall.Mount(source, target, "bind", syscall.MS_BIND|syscall.MS_REC, "")
+			if err != nil {
+				logrus.Error(err.Error())
+				return err
+			} else {
+				logrus.Infof("mount bind %s %s", source, target)
+			}
+		} else {
+			logrus.Errorf("error volume %s", r.Volume[i])
+		}
+	}
+	return
+}
 
 func (r *Runcic) rootfspath() (err error) {
 	work, worke := os.Stat(r.Roorfs())
 	if worke != nil {
 		utils.Mkdirp(r.Roorfs())
 	} else {
-
 		if r.RunWith {
 			if !work.IsDir() {
 				err = errors.New("rootfs should be dir!" + r.Roorfs())

@@ -2,6 +2,7 @@ package cic
 
 type CicConfig struct {
 	Env             []string `json:"Env"`
+	Volume          []string
 	CopyParentEnv   bool
 	Cmd             []string `json:"Cmd"`
 	ImagePullPolicy ImagePullPolicy

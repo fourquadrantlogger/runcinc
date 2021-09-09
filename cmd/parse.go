@@ -7,9 +7,9 @@ import (
 	"strings"
 )
 
-func parse(args []string) (cmd, image, env []string, imageRoot, registrySecret, cicVolume, name string, copyParentEnv bool, err error) {
+func parse(args []string) (cmd, image, env, volume []string, imageRoot, registrySecret, cicVolume, name string, copyParentEnv bool, err error) {
 	var imageIdx = func(args []string) (imageIndex int) {
-		imagePattern := `[A-Za-z0-9_\.\-/]+:[A-Za-z0-9_\.\-/]+`
+		imagePattern := `[A-Za-z0-9][A-Za-z0-9_\.\-/]+:[A-Za-z0-9][A-Za-z0-9_\.\-/]+`
 		imageIndex = -1
 		for i := 0; i < len(args); i++ {
 			if match, _ := regexp.MatchString(imagePattern, args[i]); match {
@@ -24,7 +24,7 @@ func parse(args []string) (cmd, image, env []string, imageRoot, registrySecret, 
 
 	if imageIndex < 0 {
 
-		_, unknownCmds := rflag.ParseFlag(args, []string{"env"})
+		_, unknownCmds := rflag.ParseFlag(args, []string{"env", "volume"})
 		if len(unknownCmds) > 0 {
 			image = strings.Split(unknownCmds[0], ",")
 		} else {
@@ -42,9 +42,12 @@ func parse(args []string) (cmd, image, env []string, imageRoot, registrySecret, 
 		image = strings.Split(args[imageIndex], ",")
 	}
 
-	flags, _ = rflag.ParseFlag(args[:imageIndex], []string{"env"})
+	flags, _ = rflag.ParseFlag(args[:imageIndex], []string{"env", "volume"})
 	if _, h := flags["env"]; h {
 		env = flags["env"]
+	}
+	if _, h := flags["volume"]; h {
+		volume = flags["volume"]
 	}
 	if _, h := flags["cicimage"]; h {
 		imageRoot = flags["cicimage"][0]
@@ -60,5 +63,4 @@ func parse(args []string) (cmd, image, env []string, imageRoot, registrySecret, 
 	}
 	_, copyParentEnv = flags["copyenv"]
 	return
-
 }

@@ -7,6 +7,7 @@ import (
 
 var cfg = cic.CicConfig{
 	[]string{},
+	[]string{},
 	false,
 	[]string{},
 	cic.ImagePullPolicyfNotPresent,
@@ -21,7 +22,7 @@ var cfg = cic.CicConfig{
 func Execute() {
 	if len(os.Args) > 2 {
 		var imageroot, cicvolume, name string
-		cfg.Cmd, cfg.Images, cfg.Env, imageroot, cfg.Authfile, cicvolume, name, cfg.CopyParentEnv, _ = parse(os.Args[2:])
+		cfg.Cmd, cfg.Images, cfg.Env, cfg.Volume, imageroot, cfg.Authfile, cicvolume, name, cfg.CopyParentEnv, _ = parse(os.Args[2:])
 		if imageroot != "" {
 			cfg.ImageRoot = imageroot
 		}
