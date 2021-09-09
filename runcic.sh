@@ -1,4 +1,3 @@
-set -e
 name=$1
 cicroot=/runcic/overlay/${name}
 runcic runin --name=$name ${@:3}
@@ -8,5 +7,6 @@ umount ${cicroot}/dev/pts
 umount ${cicroot}/dev
 umount ${cicroot}/proc
 umount ${cicroot}/sys
+set -e
 umount ${cicroot}
 rm -rf ${cicroot}
