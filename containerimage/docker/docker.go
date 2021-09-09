@@ -1,9 +1,8 @@
 package docker
 
 import (
+	"bytes"
 	"encoding/json"
-	"fmt"
-	"github.com/bitfield/script"
 	log "github.com/sirupsen/logrus"
 	"os"
 	"os/exec"
@@ -16,20 +15,24 @@ type Docker struct {
 }
 
 func (c *Docker) Spec(image string) (img *common.Image) {
-	cmds := fmt.Sprintf("docker image inspect %s", image)
-	speccmd := script.Exec(cmds)
-	result, err := speccmd.String()
-	log.Info(cmds)
+	cmds := []string{"docker", "inspect", image}
+	speccmd := exec.Command(cmds[0], cmds[1:]...)
+
+	var out bytes.Buffer
+	speccmd.Stdout = &out
+
+	log.Infof("%s", strings.Join(cmds, " "))
+	err := speccmd.Run()
 	if err != nil {
 		log.Errorf("docker image inspect failed: %v", err.Error())
-		log.Errorf(result)
 		return
 	}
+
 	var images = make([]podmanImageInspect, 0)
-	err = json.Unmarshal([]byte(result), &images)
+	err = json.Unmarshal([]byte(out.Bytes()), &images)
 	if err != nil {
 		log.Errorf("unmarshal docker inspect %s json failed: %v", image, err.Error())
-		log.Errorf(result)
+		log.Errorf(out.String())
 		return
 	}
 	if len(images) > 0 {

@@ -38,6 +38,8 @@ func Run(cfg CicConfig) (err error) {
 				return
 			}
 		}
+	case ImagePullPolicyfNotPresent:
+		fallthrough
 	default:
 		for i := 0; i < len(run.Images); i++ {
 			logrus.Infof("runcic imagedriver spec image %s", run.Images[i].Image)
@@ -46,13 +48,13 @@ func Run(cfg CicConfig) (err error) {
 				logrus.Warnf("runcic imagedriver not found image %s", run.Images[i].Image)
 				pullimage(run.Images[i].Image, cfg.Authfile)
 			}
-
 		}
 	}
 	for i := 0; i < len(run.Images); i++ {
 		imgi := containerimage.Driver().Spec(run.Images[i].Image)
 		run.Images[i] = imgi
 		if imgi == nil {
+			logrus.Errorf("runcic imagedriver spec image is nil,your image=%s", run.Images[i].Image)
 			return
 		}
 		logrus.Infof("runcic imagedriver spec image %+v", imgi)

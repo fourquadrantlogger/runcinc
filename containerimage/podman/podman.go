@@ -1,6 +1,7 @@
 package podman
 
 import (
+	"bytes"
 	"encoding/json"
 	log "github.com/sirupsen/logrus"
 	"os"
@@ -19,19 +20,21 @@ func (c *Podman) Spec(image string) (img *common.Image) {
 	cmds := []string{"podman", "--root", c.Root, "inspect", image}
 	speccmd := exec.Command(cmds[0], cmds[1:]...)
 	speccmd.Stderr = os.Stderr
+	var out bytes.Buffer
+	speccmd.Stdout = &out
 	log.Infof("%s", strings.Join(cmds, " "))
 	err := speccmd.Run()
-	output, _ := speccmd.Output()
+
 	if err != nil {
 		log.Errorf("podman image inspect failed: %v", err.Error())
 		return
 	}
 
 	var images = make([]podmanImageInspect, 0)
-	err = json.Unmarshal([]byte(output), &images)
+	err = json.Unmarshal([]byte(out.Bytes()), &images)
 	if err != nil {
 		log.Errorf("unmarshal podman inspect %s json failed: %v", image, err.Error())
-		log.Errorf("podman image inspect result: %s", string(output))
+		log.Errorf("podman image inspect result: %s", string(out.String()))
 		return
 	}
 	if len(images) > 0 {
