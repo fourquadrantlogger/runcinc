@@ -52,7 +52,7 @@ func (r *Runcic) Start() (err error) {
 	}
 
 	logrus.Infof("cmd=%+v env=%+v", r.Command, r.Envs)
-	err = Execv(r.Command[0], r.Command[1:], r.Envs)
+	err = Execv(r.Command[0], r.Command, r.Envs)
 	if err != nil {
 		logrus.Errorf("exec exited %v", err.Error())
 	}
