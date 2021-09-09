@@ -2,8 +2,6 @@ package podman
 
 import (
 	"encoding/json"
-	"fmt"
-	"github.com/bitfield/script"
 	log "github.com/sirupsen/logrus"
 	"os"
 	"os/exec"
@@ -18,13 +16,19 @@ type Podman struct {
 }
 
 func (c *Podman) Spec(image string) (img *common.Image) {
-	cmds := fmt.Sprintf("podman --root %s image inspect %s", c.Root, image)
-	speccmd := script.Exec(cmds)
-	result, err := speccmd.String()
+	cmds := []string{"podman", "--root", image, "inspect", c.Root, image}
+	speccmd := exec.Command(cmds[0], cmds[1:]...)
+	speccmd.Stdout = os.Stdout
+	speccmd.Stderr = os.Stderr
+
+	err := speccmd.Run()
 	log.Info(cmds)
+	var result string
 	if err != nil {
 		log.Errorf("podman image inspect failed: %v", err.Error())
-		log.Errorf(result)
+		bs, _ := speccmd.CombinedOutput()
+		result = string(bs)
+		log.Error(result)
 		return
 	}
 	var images = make([]podmanImageInspect, 0)
@@ -62,9 +66,12 @@ func (c *Podman) Pull(image, authfile string) (err error) {
 	log.Infof("podman %s", strings.Join(cmds, " "))
 	pullcmd := exec.Command("podman", cmds...)
 	pullcmd.Stdout = os.Stdout
+	pullcmd.Stderr = os.Stderr
 	err = pullcmd.Run()
 	if err != nil {
-		log.Errorf("podman image pull failed: %v", err.Error())
+		log.Errorf("podman image pull failed: %+v", pullcmd.String())
+		bs, _ := pullcmd.CombinedOutput()
+		log.Error(string(bs))
 		return
 	}
 	return
