@@ -22,17 +22,17 @@ func (c *Podman) Spec(image string) (img *common.Image) {
 	speccmd.Stderr = os.Stderr
 	log.Infof("%s", strings.Join(cmds, " "))
 	err := speccmd.Run()
-	var result = speccmd.String()
+	output, _ := speccmd.Output()
 	if err != nil {
 		log.Errorf("podman image inspect failed: %v", err.Error())
 		return
 	}
 
 	var images = make([]podmanImageInspect, 0)
-	err = json.Unmarshal([]byte(result), &images)
+	err = json.Unmarshal([]byte(output), &images)
 	if err != nil {
 		log.Errorf("unmarshal podman inspect %s json failed: %v", image, err.Error())
-		log.Errorf("podman image inspect result: %s", result)
+		log.Errorf("podman image inspect result: %s", string(output))
 		return
 	}
 	if len(images) > 0 {
@@ -68,7 +68,7 @@ func (c *Podman) Pull(image, authfile string) (err error) {
 	log.Infof("%s", strings.Join(cmds, " "))
 	err = pullcmd.Run()
 	if err != nil {
-		log.Errorf("podman image pull failed: %+v", pullcmd.String())
+		log.Errorf("podman image pull failed: %+v", err.Error())
 		return
 	}
 	return
