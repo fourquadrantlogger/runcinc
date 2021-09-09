@@ -9,5 +9,5 @@ type Image struct {
 
 type ImageDriver interface {
 	Spec(image string) *Image
-	Pull(image string) error
+	Pull(image, registrySecret string) error
 }

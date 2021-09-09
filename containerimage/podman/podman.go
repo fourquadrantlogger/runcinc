@@ -14,10 +14,11 @@ import (
 
 type Podman struct {
 	Root string
+	Auth string
 }
 
 func (c *Podman) Spec(image string) (img *common.Image) {
-	cmds := fmt.Sprintf("podman --root %s image inspect %s", c.Root, image)
+	cmds := fmt.Sprintf("podman --root %s image inspect", "--auth", "%s", c.Root, image)
 	speccmd := script.Exec(cmds)
 	result, err := speccmd.String()
 	log.Info(cmds)
@@ -50,9 +51,16 @@ func (c *Podman) Spec(image string) (img *common.Image) {
 	}
 	return
 }
-func (c *Podman) Pull(image string) (err error) {
-	log.Infof("podman image  start pull %s", image)
-	pullcmd := exec.Command("podman", "--root="+c.Root, "image", "pull", image)
+func (c *Podman) Pull(image, authfile string) (err error) {
+	cmds := []string{
+		"--root=" + c.Root, "image", "pull",
+	}
+	if authfile != "" {
+		cmds = append(cmds, "--authfile", authfile)
+	}
+	cmds = append(cmds, image)
+	log.Infof("podman %+v", cmds)
+	pullcmd := exec.Command("podman", cmds...)
 	pullcmd.Stdout = os.Stdout
 	err = pullcmd.Run()
 	if err != nil {

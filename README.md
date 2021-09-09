@@ -23,13 +23,33 @@ sh runcic.sh myedi runin   \
 --copyenv   \
 --env vara=a   \
 --cicvolume=/data/edi/  \
+--authfile=/run/secret/mysecret/.dockerconfigjson  \
 golang:latest \ 
 go env
 ```
 
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mypod
+spec:
+  containers:
+  - name: mypod
+    image: redis
+    volumeMounts:
+    - name: foo
+      mountPath: "/run/secret/mysecret"
+      readOnly: true
+  volumes:
+  - name: foo
+    secret:
+      secretName: mysecret
+```
 ## args
 sh runcic.sh myapp  
 --copyenv  传递父容器环境变量到子容器 bool类型
+--authfile  当以volume挂载kubernetes.io/dockerconfigjson类型的secret时，可以以上述形式传递
 --image 支持传递多个image，运行的时候会把image的lowerdir按顺序拼接起来，越前列的layer优先级越高
 
 ## docker usage 

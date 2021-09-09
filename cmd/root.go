@@ -14,13 +14,14 @@ var cfg = cic.CicConfig{
 	"/image",
 	"",
 	"",
+	"",
 }
 
 // Execute executes the root command.
 func Execute() {
 	if len(os.Args) > 2 {
 		var imageroot, cicvolume, name string
-		cfg.Cmd, cfg.Images, cfg.Env, imageroot, cicvolume, name, cfg.CopyParentEnv, _ = parse(os.Args[2:])
+		cfg.Cmd, cfg.Images, cfg.Env, imageroot, cfg.Authfile, cicvolume, name, cfg.CopyParentEnv, _ = parse(os.Args[2:])
 		if imageroot != "" {
 			cfg.ImageRoot = imageroot
 		}

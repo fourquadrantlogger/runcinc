@@ -13,5 +13,5 @@ func TestPodman_Spec(t *testing.T) {
 
 func TestPodman_Pull(t *testing.T) {
 	podMan := &Podman{}
-	podMan.Pull("redis:latest")
+	podMan.Pull("redis:latest", "")
 }

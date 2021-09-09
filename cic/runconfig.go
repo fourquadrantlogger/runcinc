@@ -7,6 +7,7 @@ type CicConfig struct {
 	ImagePullPolicy ImagePullPolicy
 	Images          []string
 	ImageRoot       string
+	Authfile        string
 	Name            string
 	CicVolume       string
 }
