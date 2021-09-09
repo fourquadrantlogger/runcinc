@@ -58,7 +58,7 @@ func (r *Runcic) mountbindvolume() (err error) {
 			source, target := v[0], r.Roorfs()+v[1]
 			err = syscall.Mount(source, target, "bind", syscall.MS_BIND|syscall.MS_REC, "")
 			if err != nil {
-				logrus.Error(err.Error())
+				logrus.Errorf("mount bind %s:%s err %+v", source, target, err.Error())
 				return err
 			} else {
 				logrus.Infof("mount bind %s %s", source, target)
