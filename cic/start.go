@@ -18,8 +18,8 @@ func (r *Runcic) SetEnv(copyParentEnv bool) {
 }
 func (r *Runcic) Start() (err error) {
 
-	if r.RunWith {
-		logrus.Infof("runwith mode will not create overlay on %s", r.Roorfs())
+	if r.MountRootFS {
+		logrus.Infof("  overlayfs already mounted on %s", r.Roorfs())
 	} else {
 		if err = r.cicvolume(); err != nil {
 			return
@@ -27,6 +27,8 @@ func (r *Runcic) Start() (err error) {
 		if err = r.rootfspath(); err != nil {
 			return
 		}
+	}
+	if !r.MountRootFS {
 		if err = r.mountoverlay(); err != nil {
 			return
 		}
@@ -41,15 +43,14 @@ func (r *Runcic) Start() (err error) {
 		return
 	}
 
-	if !r.RunWith {
-		if err = fs.Mount(); err != nil {
-			logrus.Errorf("fs mount failed %s", err.Error())
-		}
-		if err = fs.Link(); err != nil {
-			logrus.Errorf("fs link failed %s", err.Error())
-		}
-		r.SetEnv(r.CopyEnv)
+	if err = fs.Mount(); err != nil {
+		logrus.Errorf("fs mount failed %s", err.Error())
 	}
+
+	if err = fs.Link(); err != nil {
+		logrus.Errorf("fs link failed %s", err.Error())
+	}
+	r.SetEnv(r.CopyEnv)
 
 	logrus.Infof("cmd=%+v env=%+v", r.Command, r.Envs)
 	err = Execv(r.Command[0], r.Command, r.Envs)

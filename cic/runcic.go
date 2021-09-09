@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/sirupsen/logrus"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"runcic/containerimage/common"
@@ -15,7 +16,7 @@ import (
 
 type Runcic struct {
 	ParentRootfs    *os.File
-	RunWith         bool
+	MountRootFS     bool
 	Name            string
 	CicVolume       string
 	ContainerID     string
@@ -76,15 +77,18 @@ func (r *Runcic) rootfspath() (err error) {
 	if worke != nil {
 		utils.Mkdirp(r.Roorfs())
 	} else {
-		if r.RunWith {
+		if r.MountRootFS {
 			if !work.IsDir() {
 				err = errors.New("rootfs should be dir!" + r.Roorfs())
 				logrus.Warnf(err.Error())
 			}
 			return
 		} else {
-			err = errors.New(fmt.Sprintf("%s rootfs %s already exist!", r.Name, r.Roorfs()))
-			logrus.Errorf(err.Error())
+			logrus.Infof("%s rootfs %s already exist!", r.Name, r.Roorfs())
+			files, _ := ioutil.ReadDir(r.Roorfs())
+			if len(files) > 2 {
+				r.MountRootFS = true
+			}
 			return
 		}
 	}
