@@ -19,12 +19,12 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build
 ## usage
 
 ```
-sh runcic.sh myedi runin   \
+sh runcic.sh myruncic runin   \
 --copyenv   \
 --env vara=a   \
 --cicvolume=/data/edi/  \
 --authfile=/run/secret/mysecret/.dockerconfigjson  \
-golang:latest \ 
+golang:latest,redis:latest \ 
 go env
 ```
 
@@ -36,7 +36,8 @@ metadata:
 spec:
   containers:
   - name: mypod
-    image: redis
+    image: runcic
+    cmd:["sh","runcic.sh","myruncic","runin","--copyenv","--authfile=/run/secret/mysecret/.dockerconfigjson","golang:latest,redis:latest","go","env"]
     volumeMounts:
     - name: foo
       mountPath: "/run/secret/mysecret"
@@ -50,6 +51,6 @@ spec:
 sh runcic.sh myapp  
 --copyenv  传递父容器环境变量到子容器 bool类型
 --authfile  当以volume挂载kubernetes.io/dockerconfigjson类型的secret时，可以以上述形式传递
---image 支持传递多个image，运行的时候会把image的lowerdir按顺序拼接起来，越前列的layer优先级越高
+ 支持传递多个image，运行的时候会把image的lowerdir按顺序拼接起来，越前列的layer优先级越高
 
 ## docker usage 
