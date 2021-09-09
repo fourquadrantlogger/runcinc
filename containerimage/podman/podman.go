@@ -25,7 +25,6 @@ func (c *Podman) Spec(image string) (img *common.Image) {
 	var result = speccmd.String()
 	if err != nil {
 		log.Errorf("podman image inspect failed: %v", err.Error())
-		log.Errorf("podman image inspect result: %s", result)
 		return
 	}
 
@@ -33,6 +32,7 @@ func (c *Podman) Spec(image string) (img *common.Image) {
 	err = json.Unmarshal([]byte(result), &images)
 	if err != nil {
 		log.Errorf("unmarshal podman inspect %s json failed: %v", image, err.Error())
+		log.Errorf("podman image inspect result: %s", result)
 		return
 	}
 	if len(images) > 0 {
