@@ -22,12 +22,12 @@ func (c *Podman) Spec(image string) (img *common.Image) {
 	speccmd.Stderr = os.Stderr
 	log.Infof("%s", strings.Join(cmds, " "))
 	err := speccmd.Run()
-
+	var result = speccmd.String()
 	if err != nil {
 		log.Errorf("podman image inspect failed: %v", err.Error())
+		log.Errorf("podman image inspect result: %s", result)
 		return
 	}
-	var result = speccmd.String()
 
 	var images = make([]podmanImageInspect, 0)
 	err = json.Unmarshal([]byte(result), &images)
