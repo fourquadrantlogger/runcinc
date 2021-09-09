@@ -185,6 +185,7 @@ func Exec(cmd string, args []string, env []string) error {
 				fmt.Println("Recovered in f", r)
 			}
 		}()
+		logrus.Infof("cmd=%+v,args=%+v,env=%+v", cmd, args, env)
 		err := syscall.Exec(cmd, args, env)
 		if err != syscall.EINTR { //nolint:errorlint // unix errors are bare
 			return err
