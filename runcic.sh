@@ -7,7 +7,7 @@ umount ${cicroot}/dev/pts
 umount ${cicroot}/dev
 umount ${cicroot}/proc
 umount ${cicroot}/sys
-set -e
 umount ${cicroot}/.PlnPyKFp4CRfFtgC1_run
+set -e
 umount ${cicroot}
 rm -rf ${cicroot}
