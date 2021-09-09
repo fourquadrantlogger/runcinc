@@ -20,15 +20,12 @@ func (c *Podman) Spec(image string) (img *common.Image) {
 	speccmd := exec.Command(cmds[0], cmds[1:]...)
 	speccmd.Stdout = os.Stdout
 	speccmd.Stderr = os.Stderr
-
+	log.Infof("%s", strings.Join(cmds, " "))
 	err := speccmd.Run()
-	log.Info(cmds)
+
 	var result string
 	if err != nil {
 		log.Errorf("podman image inspect failed: %v", err.Error())
-		bs, _ := speccmd.CombinedOutput()
-		result = string(bs)
-		log.Error(result)
 		return
 	}
 	var images = make([]podmanImageInspect, 0)
@@ -57,21 +54,21 @@ func (c *Podman) Spec(image string) (img *common.Image) {
 }
 func (c *Podman) Pull(image, authfile string) (err error) {
 	cmds := []string{
+		"podman",
 		"--root=" + c.Root, "image", "pull",
 	}
 	if authfile != "" {
 		cmds = append(cmds, "--authfile", authfile)
 	}
 	cmds = append(cmds, image)
-	log.Infof("podman %s", strings.Join(cmds, " "))
-	pullcmd := exec.Command("podman", cmds...)
+
+	pullcmd := exec.Command(cmds[0], cmds[1:]...)
 	pullcmd.Stdout = os.Stdout
 	pullcmd.Stderr = os.Stderr
+	log.Infof("%s", strings.Join(cmds, " "))
 	err = pullcmd.Run()
 	if err != nil {
 		log.Errorf("podman image pull failed: %+v", pullcmd.String())
-		bs, _ := pullcmd.CombinedOutput()
-		log.Error(string(bs))
 		return
 	}
 	return
