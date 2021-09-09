@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func parse(args []string) (cmd, image, env, volume []string, imageRoot, registrySecret, cicVolume, name string, copyParentEnv bool, err error) {
+func parse(args []string) (cmd, image, env, volume []string, imageRoot, authfile, cicVolume, name string, copyParentEnv bool, err error) {
 	var imageIdx = func(args []string) (imageIndex int) {
 		imagePattern := `[A-Za-z0-9][A-Za-z0-9_\.\-/]+:[A-Za-z0-9][A-Za-z0-9_\.\-/]+`
 		imageIndex = -1
@@ -52,8 +52,8 @@ func parse(args []string) (cmd, image, env, volume []string, imageRoot, registry
 	if _, h := flags["cicimage"]; h {
 		imageRoot = flags["cicimage"][0]
 	}
-	if _, h := flags["registrysecret"]; h {
-		registrySecret = flags["registrysecret"][0]
+	if _, h := flags["authfile"]; h {
+		authfile = flags["authfile"][0]
 	}
 	if _, h := flags["cicvolume"]; h {
 		cicVolume = flags["cicvolume"][0]
