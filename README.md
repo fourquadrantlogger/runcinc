@@ -13,7 +13,8 @@ runcic设计用来实现在容器内运行镜像作为子容器
 
 ## 为什么runcic支持组合多个image作为一个容器运行？
 
-
+这个设计相当于将y层的image，切分成x1层+x2层+x3...的多个image，其中x1+x2+x3=y
+用户无需重写dockerfile组装出新的image，就可以把多个image合并为一个新的image，作为容器运行
 ## build
 
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build

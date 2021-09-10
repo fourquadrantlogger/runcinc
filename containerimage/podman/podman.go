@@ -17,7 +17,11 @@ type Podman struct {
 }
 
 func (c *Podman) Spec(image string) (img *common.Image) {
-	cmds := []string{"podman", "--root", c.Root, "inspect", image}
+	cmds := []string{
+		"podman",
+		"--root", c.Root,
+		"--storage-driver ", "overlay2",
+		"inspect", image}
 	speccmd := exec.Command(cmds[0], cmds[1:]...)
 	speccmd.Stderr = os.Stderr
 	var out bytes.Buffer
