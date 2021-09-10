@@ -61,6 +61,7 @@ func (c *Podman) Spec(image string) (img *common.Image) {
 func (c *Podman) Pull(image, authfile string) (err error) {
 	cmds := []string{
 		"podman",
+		"--storage-driver ", "overlay2",
 		"--root=" + c.Root, "image", "pull",
 	}
 	if authfile != "" {
