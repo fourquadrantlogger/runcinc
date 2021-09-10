@@ -20,7 +20,7 @@ func (c *Podman) Spec(image string) (img *common.Image) {
 	cmds := []string{
 		"podman",
 		"--root", c.Root,
-		"--storage-driver ", "overlay2",
+		"--storage-driver=overlay2",
 		"inspect", image}
 	speccmd := exec.Command(cmds[0], cmds[1:]...)
 	speccmd.Stderr = os.Stderr
@@ -61,7 +61,7 @@ func (c *Podman) Spec(image string) (img *common.Image) {
 func (c *Podman) Pull(image, authfile string) (err error) {
 	cmds := []string{
 		"podman",
-		"--storage-driver ", "overlay2",
+		"--storage-driver=overlay2",
 		"--root=" + c.Root,
 		"image", "pull",
 	}
