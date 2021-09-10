@@ -54,3 +54,20 @@ sh runcic.sh myapp
  支持传递多个image，运行的时候会把image的lowerdir按顺序拼接起来，越前列的layer优先级越高
 
 ## docker usage 
+
+
+#### runcic的overlay文件系统
+runcic的overlay文件系统，按image顺序，联合了多个image的lowerdir
+
+例如，runcic run ubuntu:latest,centos:latest
+
+ubuntu的lowerdir为l1:l2
+
+centos的lowerdir为l3:l4
+
+则，按照ubuntu:latest,centos:latest的顺序，组成的runcic overlay文件系统为
+l1:l2:l3:l4
+
+按照overlay的规则，https://www.kernel.org/doc/html/latest/filesystems/overlayfs.html
+
+l1是最上层的lowerdir，l4则为最下层的lowerdir
