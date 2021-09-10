@@ -54,7 +54,7 @@ func Run(cfg CicConfig) (err error) {
 		imgi := containerimage.Driver().Spec(run.Images[i].Image)
 		run.Images[i] = imgi
 		if imgi == nil {
-			logrus.Errorf("runcic imagedriver spec image is nil,your image=%s", run.Images[i].Image)
+			logrus.Errorf("runcic imagedriver spec image is nil,your image=%s", cfg.Images[i])
 			return
 		}
 		logrus.Infof("runcic imagedriver spec image %+v", imgi)
