@@ -20,16 +20,7 @@ func Run(cfg CicConfig) (err error) {
 			Image: cfg.Images[i],
 		})
 	}
-	var pullimage = func(img, authfile string) (pullerr error) {
-		logrus.Infof("runcic imagedriver image pull --authfile=%s  %s", authfile, img)
-		pullerr = containerimage.Driver().Pull(img, authfile)
-		if pullerr != nil {
 
-		} else {
-			logrus.Infof("runcic imagedriver image pulled %s", img)
-		}
-		return
-	}
 	switch run.ImagePullPolicy {
 	case imagePullPolicyAlways:
 		for i := 0; i < len(run.Images); i++ {
@@ -52,11 +43,11 @@ func Run(cfg CicConfig) (err error) {
 	}
 	for i := 0; i < len(run.Images); i++ {
 		imgi := containerimage.Driver().Spec(run.Images[i].Image)
-		run.Images[i] = imgi
 		if imgi == nil {
-			logrus.Errorf("runcic imagedriver spec image is nil,your image=%s", cfg.Images[i])
+			logrus.Errorf("runcic imagedriver spec image is nil,your image=%s", run.Images[i].Image)
 			return
 		}
+		run.Images[i] = imgi
 		logrus.Infof("runcic imagedriver spec image %+v", imgi)
 	}
 
@@ -69,12 +60,12 @@ func Run(cfg CicConfig) (err error) {
 	}
 
 	if err = run.Create(); err != nil {
-		logrus.Errorf("create cic by images %+v fail,error: %s", run.ImageArray(), err.Error())
+		logrus.Errorf("create cic by images %+v fail,error: %+v", run.ImageArray(), err.Error())
 		return
 	}
 
 	if err = run.Start(); err != nil {
-		logrus.Errorf("start image %+v %+v fail,error: %s", run.ImageArray(), run.Command, err.Error())
+		logrus.Errorf("start image %+v %+v fail,error: %+v", run.ImageArray(), run.Command, err.Error())
 		return
 	}
 	return
