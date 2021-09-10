@@ -10,4 +10,3 @@ umount ${cicroot}/sys
 umount ${cicroot}/.PlnPyKFp4CRfFtgC1_run
 set -e
 umount ${cicroot}
-rm -rf ${cicroot}
