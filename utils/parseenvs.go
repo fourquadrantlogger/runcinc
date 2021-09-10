@@ -23,6 +23,7 @@ func ParseEnvs(envs []string) (envmap map[string]string) {
 	return
 }
 
+//MergeEnv whn envname contain  `PATH`,split value items and merged to new value
 func MergeEnv(envmap map[string]string, envs []string) {
 	for _, kv := range envs {
 		splitIndex := strings.IndexAny(kv, "=")
