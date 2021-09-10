@@ -62,7 +62,8 @@ func (c *Podman) Pull(image, authfile string) (err error) {
 	cmds := []string{
 		"podman",
 		"--storage-driver ", "overlay2",
-		"--root=" + c.Root, "image", "pull",
+		"--root=" + c.Root,
+		"image", "pull",
 	}
 	if authfile != "" {
 		cmds = append(cmds, "--authfile", authfile)
