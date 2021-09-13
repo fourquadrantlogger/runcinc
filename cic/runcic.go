@@ -16,7 +16,7 @@ import (
 )
 
 type Runcic struct {
-	Caps            capabilities.Caps
+	Caps            *capabilities.Caps
 	ParentRootfs    *os.File
 	MountRootFS     bool
 	Name            string

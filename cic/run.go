@@ -39,6 +39,17 @@ func Run(cfg CicConfig) (err error) {
 		})
 	}
 	mergeCap(cfg.CapAdd, cfg.CapDrop)
+	run.Caps, err = capabilities.New(&capabilities.Capabilities{
+		capabilities.DefaultCapabilities,
+		capabilities.DefaultCapabilities,
+		capabilities.DefaultCapabilities,
+		capabilities.DefaultCapabilities,
+		capabilities.DefaultCapabilities,
+	})
+	if err != nil {
+		logrus.Errorf("capabilities.New   fail,error: %+v", err.Error())
+		return
+	}
 	switch run.ImagePullPolicy {
 	case imagePullPolicyAlways:
 		for i := 0; i < len(run.Images); i++ {
