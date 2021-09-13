@@ -50,8 +50,12 @@ func (r *Runcic) Start() (err error) {
 	if err = fs.Link(); err != nil {
 		logrus.Errorf("fs link failed %s", err.Error())
 	}
-	r.SetEnv(r.CopyEnv)
 
+	if err = r.Caps.ApplyCaps(); err != nil {
+		logrus.Errorf("Caps Apply failed %+v", err.Error())
+		return err
+	}
+	r.SetEnv(r.CopyEnv)
 	logrus.Infof("cmd=%+v env=%+v", r.Command, r.Envs)
 	err = Execv(r.Command[0], r.Command, r.Envs)
 	if err != nil {

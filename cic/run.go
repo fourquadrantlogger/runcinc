@@ -2,10 +2,28 @@ package cic
 
 import (
 	"github.com/sirupsen/logrus"
+	"runcic/cic/capabilities"
 	"runcic/containerimage"
 	"runcic/containerimage/common"
 )
 
+func mergeCap(CapAdd, CapDrop []string) {
+	hashCap := make(map[string]bool)
+	for _, c := range capabilities.DefaultCapabilities {
+		hashCap[c] = true
+	}
+	for _, a := range CapAdd {
+		hashCap[a] = true
+	}
+	for _, d := range CapDrop {
+		delete(hashCap, d)
+	}
+	defaultCap := make([]string, 0)
+	for c, _ := range hashCap {
+		defaultCap = append(defaultCap, c)
+	}
+	capabilities.DefaultCapabilities = defaultCap
+}
 func Run(cfg CicConfig) (err error) {
 	run := &Runcic{
 		Volume:          cfg.Volume,
@@ -20,7 +38,7 @@ func Run(cfg CicConfig) (err error) {
 			Image: cfg.Images[i],
 		})
 	}
-
+	mergeCap(cfg.CapAdd, cfg.CapDrop)
 	switch run.ImagePullPolicy {
 	case imagePullPolicyAlways:
 		for i := 0; i < len(run.Images); i++ {

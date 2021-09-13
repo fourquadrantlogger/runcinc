@@ -1,6 +1,8 @@
 package cic
 
 type CicConfig struct {
+	CapAdd          []string
+	CapDrop         []string
 	Env             []string `json:"Env"`
 	Volume          []string
 	CopyParentEnv   bool
