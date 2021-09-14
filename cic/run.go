@@ -40,11 +40,11 @@ func Run(cfg CicConfig) (err error) {
 	}
 	mergeCap(cfg.CapAdd, cfg.CapDrop)
 	run.Caps, err = capabilities.New(&capabilities.Capabilities{
-		capabilities.DefaultCapabilities,
-		capabilities.DefaultCapabilities,
-		capabilities.DefaultCapabilities,
-		capabilities.DefaultCapabilities,
-		capabilities.DefaultCapabilities,
+		Bounding:    capabilities.DefaultCapabilities,
+		Effective:   capabilities.DefaultCapabilities,
+		Inheritable: capabilities.DefaultCapabilities,
+		Permitted:   capabilities.DefaultCapabilities,
+		Ambient:     capabilities.DefaultCapabilities,
 	})
 	if err != nil {
 		logrus.Errorf("capabilities.New   fail,error: %+v", err.Error())

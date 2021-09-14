@@ -1,9 +1,7 @@
 package cic_shim
 
 import (
-	"errors"
 	"os"
-	"runtime"
 	"syscall"
 )
 
@@ -28,9 +26,6 @@ func initDaemonRuntime() {
 	}
 }
 func Daemon() (int, error) {
-	if runtime.GOOS == "windows" {
-		return -1, errors.New("unsupported windows operating system")
-	}
 	isDaemon := false
 	for i := 1; i < len(os.Args); i++ {
 		if os.Args[i] == daemonFlagName {
