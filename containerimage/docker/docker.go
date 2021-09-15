@@ -14,6 +14,9 @@ import (
 type Docker struct {
 }
 
+func (c *Docker) Name() string {
+	return "docker"
+}
 func (c *Docker) Spec(image string) (img *common.Image) {
 	cmds := []string{"docker", "inspect", image}
 	speccmd := exec.Command(cmds[0], cmds[1:]...)

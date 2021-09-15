@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/sirupsen/logrus"
 	"os"
 	"runcic/cic"
 )
@@ -24,6 +25,7 @@ var cfg = cic.CicConfig{
 func Execute() {
 	if len(os.Args) > 2 {
 		var imageroot, cicvolume, name string
+		logrus.Info(os.Args)
 		cfg.Cmd, cfg.Images, cfg.Env, cfg.CapAdd, cfg.CapDrop, cfg.Volume,
 			imageroot, cfg.Authfile, cicvolume, name,
 			cfg.CopyParentEnv, _ = parse(os.Args[2:])

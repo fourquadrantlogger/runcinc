@@ -8,6 +8,7 @@ type Image struct {
 }
 
 type ImageDriver interface {
+	Name() string
 	Spec(image string) *Image
 	Pull(image, registrySecret string) error
 }

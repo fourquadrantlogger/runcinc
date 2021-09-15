@@ -37,13 +37,13 @@ func Mount() (err error) {
 	for i := 0; i < len(DefaultMounts); i++ {
 		mc := DefaultMounts[i]
 		if err := os.MkdirAll(mc.Target, 0o755); err != nil {
-			logrus.Warnf("mkdir   %+v failed err:%s", mc.Target, err.Error())
+			logrus.WithField("target", mc.Target).WithField("err", err.Error()).Warn("mkdir failed err")
 		}
 		mc.Data = strings.Join(mc.Options, ",")
 		mc.Options = nil
 		err = syscall.Mount(mc.Source, mc.Target, mc.Fstype, mc.Flags, mc.Data)
 		if err != nil {
-			logrus.Errorf("unix.Mount %+v failed %s", mc, err.Error())
+			logrus.WithField("mountconfig", mc).WithField("err", err.Error()).Error("unix.Mount failed")
 		} else {
 			logrus.Infof("syscall.Mount(Source=%s, Target=%s, Fstype=%s,Data=%+v", mc.Source, mc.Target, mc.Fstype, mc.Data)
 		}

@@ -3,7 +3,7 @@ package podman
 import (
 	"bytes"
 	"encoding/json"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"os"
 	"os/exec"
 	"runcic/containerimage/common"
@@ -16,6 +16,9 @@ type Podman struct {
 	Auth string
 }
 
+func (c *Podman) Name() string {
+	return "podman"
+}
 func (c *Podman) Spec(image string) (img *common.Image) {
 	cmds := []string{
 		"podman",
@@ -26,19 +29,19 @@ func (c *Podman) Spec(image string) (img *common.Image) {
 	speccmd.Stderr = os.Stderr
 	var out bytes.Buffer
 	speccmd.Stdout = &out
-	log.Infof("%s", strings.Join(cmds, " "))
+	logrus.WithField("cmds", strings.Join(cmds, " ")).Info()
 	err := speccmd.Run()
 
 	if err != nil {
-		log.Errorf("podman image inspect failed: %v", err.Error())
+		logrus.WithField("err", err.Error()).Error("podman image inspect failed")
 		return
 	}
 
 	var images = make([]podmanImageInspect, 0)
 	err = json.Unmarshal(out.Bytes(), &images)
 	if err != nil {
-		log.Errorf("unmarshal podman inspect %s json failed: %v", image, err.Error())
-		log.Errorf("podman image inspect result: %s", out.String())
+		logrus.WithField("image", image).WithField("err", err.Error()).Error("unmarshal podman inspect image failed")
+		logrus.Error(out.String())
 		return
 	}
 	if len(images) > 0 {
@@ -73,10 +76,10 @@ func (c *Podman) Pull(image, authfile string) (err error) {
 	pullcmd := exec.Command(cmds[0], cmds[1:]...)
 	pullcmd.Stdout = os.Stdout
 	pullcmd.Stderr = os.Stderr
-	log.Infof("%s", strings.Join(cmds, " "))
+	logrus.WithField("cmds", strings.Join(cmds, " ")).Info()
 	err = pullcmd.Run()
 	if err != nil {
-		log.Errorf("podman image pull failed: %+v", err.Error())
+		logrus.WithField("err", err.Error()).Error("podman image pull failed")
 		return
 	}
 	return

@@ -47,7 +47,7 @@ func Run(cfg CicConfig) (err error) {
 		Ambient:     capabilities.DefaultCapabilities,
 	})
 	if err != nil {
-		logrus.Errorf("capabilities.New   fail,error: %+v", err.Error())
+		logrus.WithField("err", err.Error()).Errorf("capabilities.New fail")
 		return
 	}
 	switch run.ImagePullPolicy {
@@ -62,10 +62,13 @@ func Run(cfg CicConfig) (err error) {
 		fallthrough
 	default:
 		for i := 0; i < len(run.Images); i++ {
-			logrus.Infof("runcic imagedriver spec image %s", run.Images[i].Image)
+			logrus.WithField("image", run.Images[i].Image).Debug("spec image")
 			imagespec := containerimage.Driver().Spec(run.Images[i].Image)
 			if imagespec == nil {
-				logrus.Warnf("runcic imagedriver not found image %s", run.Images[i].Image)
+				logrus.
+					WithField("driver", containerimage.Driver().Name()).
+					WithField("image", run.Images[i].Image).
+					Info("image not found")
 				pullimage(run.Images[i].Image, cfg.Authfile)
 			}
 		}
@@ -73,11 +76,18 @@ func Run(cfg CicConfig) (err error) {
 	for i := 0; i < len(run.Images); i++ {
 		imgi := containerimage.Driver().Spec(run.Images[i].Image)
 		if imgi == nil {
-			logrus.Errorf("runcic imagedriver spec image is nil,your image=%s", run.Images[i].Image)
+			logrus.
+				WithField("image", run.Images[i].Image).
+				WithField("driver", containerimage.Driver().Name()).
+				Warn("image spec is nil!")
 			return
 		}
 		run.Images[i] = imgi
-		logrus.Infof("runcic imagedriver spec image %+v", imgi)
+		logrus.
+			WithField("image", run.Images[i].Image).
+			WithField("driver", containerimage.Driver().Name()).
+			WithField("imagespec", imgi).
+			Debug()
 	}
 
 	//todo 创建之前，需要检测是否已存在

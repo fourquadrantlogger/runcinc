@@ -26,23 +26,45 @@ func stringshas(strs []string, s string) (idx int) {
 	return -1
 }
 
+func matchFlagType(arg string) (t int) {
+	kmatch, _ := regexp.MatchString(LongflagPattern, arg)
+	if kmatch {
+		return 1
+	}
+	kmatchshort, _ := regexp.MatchString(ShortflagPattern, arg)
+	if kmatchshort {
+		return 2
+	}
+	kvmatch, _ := regexp.MatchString(LongKVflagPattern, arg)
+	if kvmatch {
+		return 3
+	}
+	kvmatchshort, _ := regexp.MatchString(ShortKVflagPattern, arg)
+	if kvmatchshort {
+		return 4
+	}
+	return
+}
+
 //ParseFlag
-//如果flag存在重复的key，appendkey中的key对value进行append，其它key的情况则value直接替换
+//如果flag存在重复的key，appendkey中的key对value进行append，其它key的情况则后续的value直接丢弃而是选择第一个value
 func ParseFlag(args []string, appendKey []string) (flags map[string][]string, unknownArgs []string) {
 	flagargs := args
 	flags = make(map[string][]string)
 	for i := 0; i < len(flagargs); i++ {
-		kmatch, _ := regexp.MatchString(LongflagPattern, flagargs[i])
-		kmatchshort, _ := regexp.MatchString(ShortflagPattern, flagargs[i])
-		kvmatch, _ := regexp.MatchString(LongKVflagPattern, flagargs[i])
-		kvmatchshort, _ := regexp.MatchString(ShortKVflagPattern, flagargs[i])
+
 		var k string
 		var v string
-		if kmatch {
+
+		switch matchFlagType(flagargs[i]) {
+		case 0:
+			unknownArgs = append(unknownArgs, flagargs[i])
+			continue
+		case 1:
 			k = flagargs[i][2:]
-		} else if kmatchshort {
+		case 2:
 			k = flagargs[i][1:]
-		} else if kvmatch {
+		case 3:
 			kv := flagargs[i][2:]
 			sep := strings.Index(kv, "=")
 			k = kv[:sep]
@@ -50,10 +72,13 @@ func ParseFlag(args []string, appendKey []string) (flags map[string][]string, un
 			if stringshas(appendKey, k) >= 0 {
 				flags[k] = append(flags[k], v)
 			} else {
-				flags[k] = []string{v}
+				if len(flags[k]) == 0 {
+					flags[k] = []string{v}
+				}
+
 			}
 			continue
-		} else if kvmatchshort {
+		case 4:
 			kv := flagargs[i][1:]
 			sep := strings.Index(kv, "=")
 			k = kv[:sep]
@@ -61,18 +86,16 @@ func ParseFlag(args []string, appendKey []string) (flags map[string][]string, un
 			if stringshas(appendKey, k) >= 0 {
 				flags[k] = append(flags[k], v)
 			} else {
-				flags[k] = []string{v}
+				if len(flags[k]) == 0 {
+					flags[k] = []string{v}
+				}
 			}
-			continue
-		} else {
-			unknownArgs = append(unknownArgs, flagargs[i])
 			continue
 		}
 
 		if i != len(flagargs)-1 {
-			vmatchshort, _ := regexp.MatchString(ShortflagPattern, flagargs[i+1])
-			vmatch, _ := regexp.MatchString(LongflagPattern, flagargs[i+1])
-			if vmatchshort || vmatch {
+			nextFlagType := matchFlagType(flagargs[i+1])
+			if nextFlagType > 0 {
 				flags[k] = []string{}
 				//existflag
 			} else {
@@ -81,7 +104,9 @@ func ParseFlag(args []string, appendKey []string) (flags map[string][]string, un
 				if stringshas(appendKey, k) >= 0 {
 					flags[k] = append(flags[k], v)
 				} else {
-					flags[k] = []string{v}
+					if len(flags[k]) == 0 {
+						flags[k] = []string{v}
+					}
 				}
 			}
 		} else {

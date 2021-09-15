@@ -11,7 +11,7 @@ func pullimage(img, authfile string) (pullerr error) {
 	if pullerr != nil {
 
 	} else {
-		logrus.Infof("runcic imagedriver image pulled %s", img)
+		logrus.WithField("image", img).Info("runcic imagedriver image pulled")
 	}
 	return
 }
